@@ -1,112 +1,292 @@
 <!DOCTYPE HTML>
 <!--
-	Lens by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+	Lens by HTML5 UP — Modified for Portfolio use
 -->
 <html>
 	<head>
-		<title>Lens by HTML5 UP</title>
+		<title>Tshering Kelxang — Portfolio</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<style>
+			/* ── Profile Panel ── */
+			#profile-panel {
+				padding: 2.5em 2.25em 1.5em;
+				text-align: center;
+				cursor: default;
+			}
+
+			#profile-photo-wrap {
+				display: inline-block;
+				margin-bottom: 1.25em;
+				cursor: pointer;
+				position: relative;
+			}
+
+			#profile-photo-wrap img {
+				width: 120px;
+				height: 120px;
+				border-radius: 50%;
+				object-fit: cover;
+				border: 3px solid #00D3B7;
+				display: block;
+				transition: box-shadow 0.25s ease, transform 0.25s ease;
+			}
+
+			#profile-photo-wrap:hover img {
+				box-shadow: 0 0 0 5px rgba(0,211,183,0.3);
+				transform: scale(1.04);
+			}
+
+			#profile-photo-wrap .click-hint {
+				position: absolute;
+				bottom: -1.4em;
+				left: 50%;
+				transform: translateX(-50%);
+				font-size: 0.65em;
+				color: #00D3B7;
+				white-space: nowrap;
+				letter-spacing: 0.05em;
+				opacity: 0.8;
+			}
+
+			#profile-name {
+				font-size: 1.5em;
+				font-weight: 700;
+				color: #555;
+				margin: 1.6em 0 0.3em;
+				line-height: 1.2;
+			}
+
+			#profile-bio {
+				font-size: 0.85em;
+				color: #aaa;
+				line-height: 1.6;
+				margin: 0;
+			}
+
+			/* ── Works Panel ── */
+			#works-panel {
+				display: none;
+				flex-direction: column;
+				height: 100%;
+			}
+
+			#works-header {
+				display: flex;
+				align-items: center;
+				gap: 0.75em;
+				padding: 1.5em 2.25em 1em;
+				border-bottom: 1px solid #eee;
+				flex-shrink: 0;
+			}
+
+			#works-back-btn {
+				background: none;
+				border: none;
+				color: #00D3B7;
+				cursor: pointer;
+				font-size: 1em;
+				padding: 0;
+				display: flex;
+				align-items: center;
+				gap: 0.4em;
+				transition: opacity 0.2s;
+			}
+
+			#works-back-btn:hover { opacity: 0.7; }
+
+			#works-header h2 {
+				font-size: 1em;
+				font-weight: 700;
+				color: #555;
+				margin: 0;
+			}
+
+			#works-list {
+				overflow-y: auto;
+				flex: 1;
+				padding: 0.75em 0;
+			}
+
+			.work-item {
+				display: flex;
+				align-items: center;
+				gap: 0.85em;
+				padding: 0.65em 2.25em;
+				cursor: pointer;
+				transition: background 0.2s ease;
+				text-align: left;
+				border: none;
+				background: none;
+				width: 100%;
+			}
+
+			.work-item:hover { background: rgba(0,211,183,0.07); }
+			.work-item.active { background: rgba(0,211,183,0.13); }
+
+			.work-item .work-thumb {
+				width: 52px;
+				height: 52px;
+				border-radius: 6px;
+				object-fit: cover;
+				flex-shrink: 0;
+				border: 2px solid transparent;
+				transition: border-color 0.2s;
+			}
+
+			.work-item.active .work-thumb,
+			.work-item:hover .work-thumb {
+				border-color: #00D3B7;
+			}
+
+			.work-item .work-meta { flex: 1; overflow: hidden; }
+
+			.work-item .work-title {
+				font-size: 0.9em;
+				font-weight: 700;
+				color: #555;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				margin-bottom: 0.2em;
+			}
+
+			.work-item .work-tag {
+				font-size: 0.72em;
+				color: #00D3B7;
+				text-transform: uppercase;
+				letter-spacing: 0.06em;
+			}
+
+			/* ── Work Detail (replaces profile when a work is active) ── */
+			#work-detail-panel {
+				display: none;
+				padding: 1.75em 2.25em;
+				text-align: left;
+			}
+
+			#work-detail-panel.visible { display: block; }
+
+			#detail-back-btn {
+				background: none;
+				border: none;
+				color: #00D3B7;
+				cursor: pointer;
+				font-size: 0.85em;
+				padding: 0 0 1em;
+				display: flex;
+				align-items: center;
+				gap: 0.4em;
+				transition: opacity 0.2s;
+			}
+
+			#detail-back-btn:hover { opacity: 0.7; }
+
+			#detail-title {
+				font-size: 1.3em;
+				font-weight: 700;
+				color: #555;
+				margin-bottom: 0.4em;
+			}
+
+			#detail-tag {
+				font-size: 0.75em;
+				color: #00D3B7;
+				text-transform: uppercase;
+				letter-spacing: 0.08em;
+				margin-bottom: 1em;
+			}
+
+			#detail-description {
+				font-size: 0.875em;
+				color: #888;
+				line-height: 1.7;
+				margin-bottom: 1.25em;
+			}
+
+			#detail-year {
+				font-size: 0.78em;
+				color: #bbb;
+			}
+
+			/* ── Footer ── */
+			#footer {
+				padding: 1.5em 2.25em 1em;
+				border-top: 1px solid #eee;
+			}
+
+			/* ── Viewer caption override ── */
+			#viewer .slide .caption {
+				padding-bottom: 1.5em;
+			}
+
+			#viewer .slide .caption h2 {
+				font-size: 1.15em;
+				margin-bottom: 0.3em;
+			}
+
+			#viewer .slide .caption p {
+				font-size: 0.85em;
+				margin: 0;
+				opacity: 0.75;
+			}
+		</style>
 	</head>
 	<body class="is-preload-0 is-preload-1 is-preload-2">
 
 		<!-- Main -->
-			<div id="main">
+		<div id="main">
 
-				<!-- Header -->
-					<header id="header">
-						<h1>Lens</h1>
-						<p>Just another fine responsive site template by <a href="http://html5up.net">HTML5 UP</a></p>
-						<ul class="icons">
-							<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-							<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-							<li><a href="#" class="icon brands fa-github"><span class="label">Github</span></a></li>
-							<li><a href="#" class="icon fa-envelope"><span class="label">Email</span></a></li>
-						</ul>
-					</header>
-
-				<!-- Thumbnail -->
-					<section id="thumbnails">
-						<article>
-							<a class="thumbnail" href="images/fulls/01.jpg" data-position="left center"><img src="images/thumbs/01.jpg" alt="" /></a>
-							<h2>Diam tempus accumsan</h2>
-							<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-						</article>
-						<article>
-							<a class="thumbnail" href="images/fulls/02.jpg"><img src="images/thumbs/02.jpg" alt="" /></a>
-							<h2>Vivamus convallis libero</h2>
-							<p>Sed velit lacus, laoreet at venenatis convallis in lorem tincidunt.</p>
-						</article>
-						<article>
-							<a class="thumbnail" href="images/fulls/03.jpg" data-position="top center"><img src="images/thumbs/03.jpg" alt="" /></a>
-							<h2>Nec accumsan enim felis</h2>
-							<p>Maecenas eleifend tellus ut turpis eleifend, vitae pretium faucibus.</p>
-						</article>
-						<article>
-							<a class="thumbnail" href="images/fulls/04.jpg"><img src="images/thumbs/04.jpg" alt="" /></a>
-							<h2>Donec maximus nisi eget</h2>
-							<p>Tristique in nulla vel congue. Sed sociis natoque parturient nascetur.</p>
-						</article>
-						<article>
-							<a class="thumbnail" href="images/fulls/05.jpg" data-position="top center"><img src="images/thumbs/05.jpg" alt="" /></a>
-							<h2>Nullam vitae nunc vulputate</h2>
-							<p>In pellentesque cursus velit id posuere. Donec vehicula nulla.</p>
-						</article>
-						<article>
-							<a class="thumbnail" href="images/fulls/06.jpg"><img src="images/thumbs/06.jpg" alt="" /></a>
-							<h2>Phasellus magna faucibus</h2>
-							<p>Nulla dignissim libero maximus tellus varius dictum ut posuere magna.</p>
-						</article>
-						<article>
-							<a class="thumbnail" href="images/fulls/07.jpg"><img src="images/thumbs/07.jpg" alt="" /></a>
-							<h2>Proin quis mauris</h2>
-							<p>Etiam ultricies, lorem quis efficitur porttitor, facilisis ante orci urna.</p>
-						</article>
-						<article>
-							<a class="thumbnail" href="images/fulls/08.jpg"><img src="images/thumbs/08.jpg" alt="" /></a>
-							<h2>Gravida quis varius enim</h2>
-							<p>Nunc egestas congue lorem. Nullam dictum placerat ex sapien tortor mattis.</p>
-						</article>
-						<article>
-							<a class="thumbnail" href="images/fulls/09.jpg"><img src="images/thumbs/09.jpg" alt="" /></a>
-							<h2>Morbi eget vitae adipiscing</h2>
-							<p>In quis vulputate dui. Maecenas metus elit, dictum praesent lacinia lacus.</p>
-						</article>
-						<article>
-							<a class="thumbnail" href="images/fulls/10.jpg"><img src="images/thumbs/10.jpg" alt="" /></a>
-							<h2>Habitant tristique senectus</h2>
-							<p>Vestibulum ante ipsum primis in faucibus orci luctus ac tincidunt dolor.</p>
-						</article>
-						<article>
-							<a class="thumbnail" href="images/fulls/11.jpg"><img src="images/thumbs/11.jpg" alt="" /></a>
-							<h2>Pharetra ex non faucibus</h2>
-							<p>Ut sed magna euismod leo laoreet congue. Fusce congue enim ultricies.</p>
-						</article>
-						<article>
-							<a class="thumbnail" href="images/fulls/12.jpg"><img src="images/thumbs/12.jpg" alt="" /></a>
-							<h2>Mattis lorem sodales</h2>
-							<p>Feugiat auctor leo massa, nec vestibulum nisl erat faucibus, rutrum nulla.</p>
-						</article>
-					</section>
-
-				<!-- Footer -->
-					<footer id="footer">
-						<ul class="copyright">
-							<li>&copy; Untitled.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
-						</ul>
-					</footer>
-
+			<!-- Profile Panel (default view) -->
+			<div id="profile-panel">
+				<div id="profile-photo-wrap" title="Click to view my works">
+					<!-- Replace images/profile.jpg with your actual photo -->
+					<img src="images/profile.jpg" alt="My Photo" id="profile-photo" onerror="this.src='images/thumbs/01.jpg'" />
+					<span class="click-hint">▸ View my works</span>
+				</div>
+				<h1 id="profile-name">Tshering Kelxang</h1>
+				<p id="profile-bio">Gamer. Videographer. Animation Rigger. Photographer. Graphic Designer. Crafting worlds through lenses, rigs, and pixels — one frame at a time.</p>
 			</div>
 
+			<!-- Works Panel (shown after clicking profile photo) -->
+			<div id="works-panel">
+				<div id="works-header">
+					<button id="works-back-btn" title="Back to profile">&#8592; Back</button>
+					<h2>My Works</h2>
+				</div>
+				<div id="works-list">
+					<!-- Populated by JS from the works data -->
+				</div>
+			</div>
+
+			<!-- Work Detail Panel (shown in sidebar when a work is selected) -->
+			<div id="work-detail-panel">
+				<button id="detail-back-btn" title="Back to works list">&#8592; All Works</button>
+				<div id="detail-tag"></div>
+				<h2 id="detail-title"></h2>
+				<p id="detail-description"></p>
+				<p id="detail-year"></p>
+			</div>
+
+			<!-- Footer -->
+			<footer id="footer">
+				<ul class="copyright">
+					<li>&copy; Tshering Kelxang.</li>
+				</ul>
+			</footer>
+
+		</div><!-- /main -->
+
+		<!-- Hidden thumbnails section (still needed by main.js viewer engine) -->
+		<section id="thumbnails" style="display:none;"></section>
+
 		<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/browser.min.js"></script>
-			<script src="assets/js/breakpoints.min.js"></script>
-			<script src="assets/js/main.js"></script>
+		<script src="assets/js/jquery.min.js"></script>
+		<script src="assets/js/browser.min.js"></script>
+		<script src="assets/js/breakpoints.min.js"></script>
+		<script src="assets/js/portfolio.js"></script>
 
 	</body>
 </html>
