@@ -1,0 +1,633 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Portfolio Admin — Tshering Kelxang</title>
+	<style>
+		*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+		:root {
+			--teal:      #00D3B7;
+			--teal-dim:  rgba(0,211,183,0.12);
+			--bg:        #f4f5f7;
+			--panel:     #ffffff;
+			--border:    #e2e5ea;
+			--text:      #2d3748;
+			--muted:     #718096;
+			--danger:    #e53e3e;
+			--danger-dim:rgba(229,62,62,0.1);
+			--shadow:    0 2px 12px rgba(0,0,0,0.08);
+			--radius:    10px;
+		}
+		body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+		#login-screen {
+			display: flex; align-items: center; justify-content: center;
+			min-height: 100vh; background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+		}
+		.login-box {
+			background: white; border-radius: 16px; padding: 2.5em 2.5em 2em;
+			width: 340px; box-shadow: 0 20px 60px rgba(0,0,0,0.4); text-align: center;
+		}
+		.login-box h1 { font-size: 1.4em; color: var(--text); margin-bottom: 0.25em; }
+		.login-box p  { font-size: 0.85em; color: var(--muted); margin-bottom: 1.75em; }
+		.login-box input {
+			width: 100%; padding: 0.75em 1em; border: 1.5px solid var(--border);
+			border-radius: 8px; font-size: 1em; outline: none; transition: border-color 0.2s;
+			margin-bottom: 1em; font-family: inherit;
+		}
+		.login-box input:focus { border-color: var(--teal); }
+		.login-box button {
+			width: 100%; padding: 0.8em; background: var(--teal); color: white;
+			border: none; border-radius: 8px; font-size: 1em; font-weight: 600;
+			cursor: pointer; transition: opacity 0.2s; font-family: inherit;
+		}
+		.login-box button:hover { opacity: 0.88; }
+		.login-error { color: var(--danger); font-size: 0.82em; margin-top: 0.75em; display: none; }
+
+		#admin-shell { display: none; }
+
+		header {
+			background: var(--panel); border-bottom: 1px solid var(--border);
+			padding: 0 2em; height: 58px; display: flex; align-items: center;
+			justify-content: space-between; position: sticky; top: 0; z-index: 100;
+			box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+		}
+		header .brand { font-size: 1.05em; font-weight: 700; color: var(--teal); display: flex; align-items: center; gap: 0.5em; }
+		header .brand span { color: var(--text); font-weight: 400; }
+		header nav { display: flex; gap: 0.5em; align-items: center; }
+		header nav a {
+			font-size: 0.85em; color: var(--muted); text-decoration: none;
+			padding: 0.4em 0.9em; border-radius: 6px; transition: background 0.15s, color 0.15s;
+		}
+		header nav a:hover { background: var(--teal-dim); color: var(--teal); }
+		#logout-btn {
+			font-size: 0.82em; color: var(--danger); background: var(--danger-dim);
+			border: none; padding: 0.4em 0.9em; border-radius: 6px; cursor: pointer;
+			font-family: inherit; transition: opacity 0.2s;
+		}
+		#logout-btn:hover { opacity: 0.75; }
+
+		main { max-width: 960px; margin: 2em auto; padding: 0 1.5em 4em; }
+
+		.section-card {
+			background: var(--panel); border-radius: var(--radius); border: 1px solid var(--border);
+			margin-bottom: 1.5em; box-shadow: var(--shadow); overflow: hidden;
+		}
+		.section-header {
+			display: flex; align-items: center; justify-content: space-between;
+			padding: 1em 1.25em; border-bottom: 1px solid var(--border);
+			background: #fafbfc; cursor: pointer; user-select: none; transition: background 0.15s;
+		}
+		.section-header:hover { background: var(--teal-dim); }
+		.section-header-left { display: flex; align-items: center; gap: 0.75em; }
+		.section-chevron { font-size: 0.75em; color: var(--muted); transition: transform 0.2s; }
+		.section-card.collapsed .section-chevron { transform: rotate(-90deg); }
+		.section-label { font-weight: 700; color: var(--text); font-size: 0.95em; }
+		.section-count { font-size: 0.75em; color: var(--muted); background: var(--border); padding: 0.2em 0.6em; border-radius: 20px; }
+		.section-actions { display: flex; gap: 0.5em; align-items: center; }
+		.section-body { padding: 1em 1.25em; }
+		.section-card.collapsed .section-body { display: none; }
+
+		.work-row {
+			display: flex; align-items: center; gap: 0.9em;
+			padding: 0.6em 0.75em; border-radius: 8px; margin-bottom: 0.4em;
+			border: 1px solid transparent; transition: background 0.15s, border-color 0.15s;
+			background: var(--bg);
+		}
+		.work-row:hover { border-color: var(--border); background: white; }
+		.work-row-thumb { width: 48px; height: 48px; border-radius: 6px; object-fit: cover; flex-shrink: 0; background: var(--border); }
+		.work-row-info { flex: 1; min-width: 0; }
+		.work-row-title { font-size: 0.88em; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+		.work-row-meta  { font-size: 0.75em; color: var(--muted); margin-top: 0.15em; }
+		.work-row-btns  { display: flex; gap: 0.4em; flex-shrink: 0; }
+
+		.btn {
+			display: inline-flex; align-items: center; gap: 0.35em;
+			padding: 0.42em 0.85em; border-radius: 7px; font-size: 0.8em;
+			font-family: inherit; font-weight: 600; cursor: pointer;
+			border: 1.5px solid transparent; transition: opacity 0.15s, background 0.15s;
+			text-decoration: none; white-space: nowrap;
+		}
+		.btn:hover { opacity: 0.82; }
+		.btn-teal    { background: var(--teal); color: white; border-color: var(--teal); }
+		.btn-green   { background: #38a169; color: white; border-color: #38a169; }
+		.btn-outline { background: white; color: var(--text); border-color: var(--border); }
+		.btn-outline:hover { border-color: var(--teal); color: var(--teal); opacity: 1; }
+		.btn-danger  { background: var(--danger-dim); color: var(--danger); border-color: transparent; }
+		.btn-danger:hover { background: var(--danger); color: white; opacity: 1; }
+		.btn-sm { padding: 0.3em 0.65em; font-size: 0.76em; }
+
+		.add-work-btn {
+			width: 100%; padding: 0.6em; border: 1.5px dashed var(--border);
+			border-radius: 8px; background: transparent; color: var(--muted);
+			font-family: inherit; font-size: 0.83em; cursor: pointer;
+			transition: border-color 0.2s, color 0.2s; margin-top: 0.5em;
+			display: flex; align-items: center; justify-content: center; gap: 0.4em;
+		}
+		.add-work-btn:hover { border-color: var(--teal); color: var(--teal); }
+
+		.toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5em; flex-wrap: wrap; gap: 0.75em; }
+		.toolbar-title { font-size: 1.25em; font-weight: 700; color: var(--text); }
+		.toolbar-actions { display: flex; gap: 0.6em; flex-wrap: wrap; }
+
+		/* ── EXPORT PANEL ── */
+		#export-panel {
+			background: #1a202c; border-radius: var(--radius); border: 2px solid var(--teal);
+			margin-bottom: 1.5em; overflow: hidden; display: none;
+		}
+		.export-header {
+			background: var(--teal); padding: 0.85em 1.25em;
+			display: flex; align-items: center; justify-content: space-between;
+		}
+		.export-header h3 { color: white; font-size: 0.95em; margin: 0; font-weight: 700; }
+		.export-steps {
+			padding: 1em 1.25em 0.5em; color: #a0aec0; font-size: 0.82em; line-height: 2;
+		}
+		.export-steps strong { color: #e2e8f0; }
+		.export-steps code { background: #2d3748; color: var(--teal); padding: 0.15em 0.5em; border-radius: 4px; font-size: 0.92em; }
+		#export-code {
+			margin: 0.75em 1.25em 1.25em; padding: 1em; background: #0d1117;
+			border-radius: 8px; color: #7ee787; font-family: monospace; font-size: 0.78em;
+			white-space: pre-wrap; overflow-x: auto; border: 1px solid #30363d;
+			max-height: 220px; overflow-y: auto; line-height: 1.6; word-break: break-all;
+		}
+		.export-copy-bar { padding: 0 1.25em 1.25em; display: flex; gap: 0.6em; align-items: center; }
+		#copy-confirm { font-size: 0.82em; color: #68d391; display: none; }
+
+		#status-bar {
+			background: #e6fff9; border: 1px solid var(--teal); border-radius: 8px;
+			padding: 0.75em 1.25em; margin-bottom: 1.25em;
+			font-size: 0.85em; color: #00695c; display: none;
+			align-items: center; gap: 0.6em;
+		}
+		#status-bar.visible { display: flex; }
+
+		.modal-backdrop {
+			position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+			z-index: 300; display: flex; align-items: center; justify-content: center; padding: 1em;
+		}
+		.modal {
+			background: white; border-radius: 14px; width: 100%; max-width: 540px;
+			box-shadow: 0 20px 60px rgba(0,0,0,0.25); max-height: 90vh;
+			display: flex; flex-direction: column; overflow: hidden;
+		}
+		.modal-header {
+			padding: 1.25em 1.5em; border-bottom: 1px solid var(--border);
+			display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+		}
+		.modal-header h2 { font-size: 1.05em; font-weight: 700; color: var(--text); }
+		.modal-close { background: none; border: none; font-size: 1.3em; color: var(--muted); cursor: pointer; line-height: 1; }
+		.modal-close:hover { color: var(--danger); }
+		.modal-body { padding: 1.5em; overflow-y: auto; flex: 1; }
+		.modal-footer { padding: 1em 1.5em; border-top: 1px solid var(--border); display: flex; gap: 0.6em; justify-content: flex-end; flex-shrink: 0; }
+
+		.form-group { margin-bottom: 1.1em; }
+		.form-group label { display: block; font-size: 0.8em; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.4em; }
+		.form-group input,
+		.form-group textarea,
+		.form-group select {
+			width: 100%; padding: 0.65em 0.9em; border: 1.5px solid var(--border);
+			border-radius: 8px; font-family: inherit; font-size: 0.9em; color: var(--text);
+			outline: none; transition: border-color 0.2s; background: white;
+		}
+		.form-group input:focus,
+		.form-group textarea:focus,
+		.form-group select:focus { border-color: var(--teal); }
+		.form-group textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+		.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75em; }
+
+		.img-preview { width: 100%; height: 160px; border-radius: 8px; object-fit: contain; background: var(--bg); border: 1.5px solid var(--border); display: none; margin-bottom: 0.5em; }
+		.img-upload-zone { border: 2px dashed var(--border); border-radius: 8px; padding: 1.5em; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; background: var(--bg); }
+		.img-upload-zone:hover, .img-upload-zone.drag-over { border-color: var(--teal); background: var(--teal-dim); }
+		.img-upload-zone p { font-size: 0.83em; color: var(--muted); margin-top: 0.4em; }
+		.img-upload-zone input[type="file"] { display: none; }
+		.img-filename { font-size: 0.78em; color: var(--teal); margin-top: 0.35em; font-weight: 600; word-break: break-all; }
+
+		#toast {
+			position: fixed; bottom: 2em; left: 50%; transform: translateX(-50%) translateY(20px);
+			background: #2d3748; color: white; padding: 0.65em 1.4em; border-radius: 30px;
+			font-size: 0.85em; font-weight: 600; opacity: 0; transition: opacity 0.3s, transform 0.3s;
+			z-index: 400; pointer-events: none;
+		}
+		#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+		#toast.success { background: var(--teal); }
+		#toast.error   { background: var(--danger); }
+
+		.confirm-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 500; display: flex; align-items: center; justify-content: center; }
+		.confirm-box { background: white; border-radius: 12px; padding: 1.75em 2em; max-width: 360px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.2); text-align: center; }
+		.confirm-box h3 { font-size: 1.05em; color: var(--text); margin-bottom: 0.5em; }
+		.confirm-box p  { font-size: 0.85em; color: var(--muted); margin-bottom: 1.5em; line-height: 1.6; }
+		.confirm-btns   { display: flex; gap: 0.6em; justify-content: center; }
+
+		.empty-state { text-align: center; padding: 1.5em; color: var(--muted); font-size: 0.85em; }
+		.info-note { background: #fffbea; border: 1px solid #f6d860; border-radius: 8px; padding: 0.75em 1em; font-size: 0.8em; color: #7a5c00; margin-bottom: 1em; line-height: 1.6; }
+	</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+	<div class="login-box">
+		<h1>🔐 Portfolio Admin</h1>
+		<p>Tshering Kelxang — Portfolio Manager</p>
+		<input type="password" id="pw-input" placeholder="Enter password" autocomplete="current-password" />
+		<button id="pw-submit">Sign In</button>
+		<div class="login-error" id="login-error">Incorrect password. Try again.</div>
+	</div>
+</div>
+
+<!-- ADMIN SHELL -->
+<div id="admin-shell">
+	<header>
+		<div class="brand">⚡ <span>Portfolio Admin</span></div>
+		<nav>
+			<a href="index.html" target="_blank">↗ View Site</a>
+			<button id="logout-btn">Logout</button>
+		</nav>
+	</header>
+
+	<main>
+		<div class="toolbar">
+			<div class="toolbar-title">Sections &amp; Works</div>
+			<div class="toolbar-actions">
+				<button class="btn btn-outline" id="add-section-btn">＋ Add Section</button>
+				<button class="btn btn-green"   id="export-btn">📋 Export Code for GitHub</button>
+				<button class="btn btn-danger btn-sm" id="clear-all-btn">🗑 Clear All</button>
+			</div>
+		</div>
+
+		<div class="info-note">
+			💡 <strong>How to publish:</strong> Add your works below, then click the green <strong>📋 Export Code for GitHub</strong> button. Copy the snippet it generates, paste it into <code>assets/js/portfolio.js</code>, and push to GitHub.
+		</div>
+
+		<!-- EXPORT PANEL (hidden until button clicked) -->
+		<div id="export-panel">
+			<div class="export-header">
+				<h3>📋 Export Code for GitHub Pages</h3>
+				<button class="btn btn-sm" id="export-close-btn" style="background:rgba(255,255,255,0.2);color:white;border-color:rgba(255,255,255,0.4);">✕ Close</button>
+			</div>
+			<div class="export-steps">
+				<strong>3 steps to publish your portfolio:</strong><br>
+				1. Click <strong>Copy to Clipboard</strong> below.<br>
+				2. Open <code>assets/js/portfolio.js</code> in any text editor (Notepad, VS Code, etc.).<br>
+				3. Find the line <code>var PORTFOLIO_DATA = [</code> — select from that line down to the matching <code>];</code> and replace it with what you copied. Save, commit &amp; push to GitHub.
+			</div>
+			<pre id="export-code">// your data will appear here</pre>
+			<div class="export-copy-bar">
+				<button class="btn btn-teal" id="copy-btn">📋 Copy to Clipboard</button>
+				<span id="copy-confirm">✅ Copied! Now paste into portfolio.js</span>
+			</div>
+		</div>
+
+		<div id="status-bar">✅ <span id="status-msg"></span></div>
+		<div id="sections-container"></div>
+	</main>
+</div>
+
+<!-- WORK MODAL -->
+<div class="modal-backdrop" id="work-modal" style="display:none;">
+	<div class="modal">
+		<div class="modal-header">
+			<h2 id="modal-title">Add Work</h2>
+			<button class="modal-close" id="modal-close-btn">✕</button>
+		</div>
+		<div class="modal-body">
+			<div class="form-group">
+				<label>Image</label>
+				<img id="modal-img-preview" class="img-preview" src="" alt="Preview" />
+				<div class="img-upload-zone" id="modal-upload-zone">
+					<div style="font-size:2em;">🖼️</div>
+					<p>Click to select image for preview<br><small>Then manually copy it to <code>images/fulls/</code></small></p>
+					<input type="file" id="modal-file-input" accept="image/*" />
+				</div>
+				<div class="img-filename" id="modal-file-name"></div>
+				<div style="margin-top:0.6em;">
+					<label style="font-size:0.78em;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:0.3em;">Image path (relative to site root)</label>
+					<input type="text" id="modal-img-path" placeholder="images/fulls/my-photo.jpg" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label>Title</label>
+				<input type="text" id="modal-title-input" placeholder="e.g. Mountain Sunrise" />
+			</div>
+			<div class="form-row">
+				<div class="form-group">
+					<label>Tag / Category</label>
+					<input type="text" id="modal-tag-input" placeholder="e.g. Photography" />
+				</div>
+				<div class="form-group">
+					<label>Year</label>
+					<input type="text" id="modal-year-input" placeholder="2024" maxlength="4" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label>Description</label>
+				<textarea id="modal-desc-input" placeholder="Describe this work..."></textarea>
+			</div>
+			<div class="form-row">
+				<div class="form-group">
+					<label>Display Mode</label>
+					<select id="modal-size-input">
+						<option value="cover">Cover (fill screen)</option>
+						<option value="contain">Contain (show full image)</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label>Focus Position</label>
+					<select id="modal-position-input">
+						<option value="center">Center</option>
+						<option value="top center">Top Center</option>
+						<option value="bottom center">Bottom Center</option>
+						<option value="left center">Left</option>
+						<option value="right center">Right</option>
+					</select>
+				</div>
+			</div>
+			<input type="hidden" id="modal-section-idx" />
+			<input type="hidden" id="modal-work-idx" />
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-outline" id="modal-cancel-btn">Cancel</button>
+			<button class="btn btn-teal"    id="modal-save-btn">Save Work</button>
+		</div>
+	</div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const ADMIN_PASSWORD = 'kelxang2024';
+const STORAGE_KEY    = 'portfolio_sections';
+let sections = [];
+
+/* ── LOGIN ── */
+document.getElementById('pw-submit').addEventListener('click', tryLogin);
+document.getElementById('pw-input').addEventListener('keydown', e => { if (e.key === 'Enter') tryLogin(); });
+
+function tryLogin() {
+	if (document.getElementById('pw-input').value === ADMIN_PASSWORD) {
+		document.getElementById('login-screen').style.display = 'none';
+		document.getElementById('admin-shell').style.display  = 'block';
+		loadData();
+	} else {
+		document.getElementById('login-error').style.display = 'block';
+		document.getElementById('pw-input').value = '';
+		document.getElementById('pw-input').focus();
+	}
+}
+document.getElementById('logout-btn').addEventListener('click', () => {
+	document.getElementById('admin-shell').style.display  = 'none';
+	document.getElementById('login-screen').style.display = 'flex';
+	document.getElementById('pw-input').value = '';
+});
+
+/* ── LOAD / SAVE ── */
+function loadData() {
+	try {
+		const raw = localStorage.getItem(STORAGE_KEY);
+		sections = raw ? JSON.parse(raw) : [];
+	} catch(e) { sections = []; }
+	renderSections();
+	showStatus('Loaded ' + sections.length + ' section(s).');
+}
+function saveData() {
+	try {
+		localStorage.setItem(STORAGE_KEY, JSON.stringify(sections));
+		showStatus('Saved! Click "Export Code for GitHub" to publish.');
+		showToast('✅ Saved!', 'success');
+	} catch(e) {
+		showToast('Save failed: ' + e.message, 'error');
+	}
+}
+
+/* ── EXPORT ── */
+document.getElementById('export-btn').addEventListener('click', function() {
+	const json    = JSON.stringify(sections, null, '\t');
+	const snippet = 'var PORTFOLIO_DATA = ' + json + ';';
+	document.getElementById('export-code').textContent = snippet;
+	document.getElementById('export-panel').style.display = 'block';
+	document.getElementById('copy-confirm').style.display = 'none';
+	document.getElementById('export-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+document.getElementById('export-close-btn').addEventListener('click', function() {
+	document.getElementById('export-panel').style.display = 'none';
+});
+document.getElementById('copy-btn').addEventListener('click', function() {
+	const code = document.getElementById('export-code').textContent;
+	if (navigator.clipboard && navigator.clipboard.writeText) {
+		navigator.clipboard.writeText(code).then(function() {
+			document.getElementById('copy-confirm').style.display = 'inline';
+			showToast('📋 Copied! Paste into portfolio.js', 'success');
+		});
+	} else {
+		// fallback for file:// protocol
+		const ta = document.createElement('textarea');
+		ta.value = code;
+		ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;';
+		document.body.appendChild(ta);
+		ta.focus(); ta.select();
+		document.execCommand('copy');
+		document.body.removeChild(ta);
+		document.getElementById('copy-confirm').style.display = 'inline';
+		showToast('📋 Copied!', 'success');
+	}
+});
+
+/* ── RENDER ── */
+function renderSections() {
+	const container = document.getElementById('sections-container');
+	container.innerHTML = '';
+	if (!sections.length) {
+		container.innerHTML = '<div class="empty-state" style="padding:3em;">No sections yet — click <strong>＋ Add Section</strong> to get started.</div>';
+		return;
+	}
+	sections.forEach((sec, si) => renderSectionCard(sec, si, container));
+}
+function renderSectionCard(sec, si, container) {
+	const card  = document.createElement('div');
+	card.className = 'section-card';
+	const count = sec.items.length;
+	card.innerHTML = `
+		<div class="section-header">
+			<div class="section-header-left">
+				<span class="section-chevron">▼</span>
+				<span class="section-label">${esc(sec.label)}</span>
+				<span class="section-count">${count} item${count!==1?'s':''}</span>
+			</div>
+			<div class="section-actions">
+				<button class="btn btn-outline btn-sm rename-btn">✏️ Rename</button>
+				<button class="btn btn-danger  btn-sm del-section-btn">🗑 Delete</button>
+			</div>
+		</div>
+		<div class="section-body">
+			<div class="works-list" id="wlist-${si}"></div>
+			<button class="add-work-btn">＋ Add Work to "${esc(sec.label)}"</button>
+		</div>`;
+	container.appendChild(card);
+
+	card.querySelector('.section-header').addEventListener('click', e => {
+		if (e.target.closest('button')) return;
+		card.classList.toggle('collapsed');
+	});
+	card.querySelector('.rename-btn').addEventListener('click', () => {
+		const name = prompt('Rename section:', sec.label);
+		if (name && name.trim()) { sections[si].label = name.trim(); saveData(); renderSections(); }
+	});
+	card.querySelector('.del-section-btn').addEventListener('click', () => {
+		confirmDialog('Delete section "' + sec.label + '" and all ' + count + ' item(s)?', () => {
+			sections.splice(si, 1); saveData(); renderSections();
+		});
+	});
+	card.querySelector('.add-work-btn').addEventListener('click', () => openModal(si, null));
+
+	const wlist = card.querySelector('#wlist-' + si);
+	if (!count) { wlist.innerHTML = '<div class="empty-state">No works yet.</div>'; return; }
+	sec.items.forEach((w, wi) => {
+		const row = document.createElement('div');
+		row.className = 'work-row';
+		row.innerHTML = `
+			<img class="work-row-thumb" src="${esc(w.thumb||w.full||'')}" alt="" onerror="this.style.opacity='0.2'" />
+			<div class="work-row-info">
+				<div class="work-row-title">${esc(w.title)}</div>
+				<div class="work-row-meta">${esc(w.tag)} · ${esc(w.year)}</div>
+			</div>
+			<div class="work-row-btns">
+				<button class="btn btn-outline btn-sm edit-btn">✏️ Edit</button>
+				<button class="btn btn-danger  btn-sm del-btn">🗑</button>
+			</div>`;
+		row.querySelector('.edit-btn').addEventListener('click', () => openModal(si, wi));
+		row.querySelector('.del-btn').addEventListener('click', () => {
+			confirmDialog('Delete "' + w.title + '"?', () => {
+				sections[si].items.splice(wi, 1); saveData(); renderSections();
+			});
+		});
+		wlist.appendChild(row);
+	});
+}
+
+/* ── SECTION ACTIONS ── */
+document.getElementById('add-section-btn').addEventListener('click', () => {
+	const name = prompt('New section name:');
+	if (!name || !name.trim()) return;
+	sections.push({ label: name.trim(), items: [] });
+	saveData(); renderSections();
+});
+document.getElementById('clear-all-btn').addEventListener('click', () => {
+	confirmDialog('Clear ALL sections and works?', () => { sections = []; saveData(); renderSections(); });
+});
+
+/* ── MODAL ── */
+function openModal(si, wi) {
+	const isEdit = wi !== null;
+	document.getElementById('modal-title').textContent = isEdit ? 'Edit Work' : 'Add Work';
+	['modal-title-input','modal-tag-input','modal-year-input','modal-desc-input','modal-img-path','modal-file-name']
+		.forEach(id => { document.getElementById(id).value = ''; });
+	document.getElementById('modal-img-preview').style.display = 'none';
+	document.getElementById('modal-img-preview').src = '';
+	document.getElementById('modal-upload-zone').style.display = 'block';
+	document.getElementById('modal-size-input').value     = 'cover';
+	document.getElementById('modal-position-input').value = 'center';
+	document.getElementById('modal-section-idx').value    = si;
+	document.getElementById('modal-work-idx').value       = wi !== null ? wi : '';
+	document.getElementById('modal-file-input').value     = '';
+
+	if (isEdit) {
+		const w = sections[si].items[wi];
+		document.getElementById('modal-title-input').value    = w.title       || '';
+		document.getElementById('modal-tag-input').value      = w.tag         || '';
+		document.getElementById('modal-year-input').value     = w.year        || '';
+		document.getElementById('modal-desc-input').value     = w.description || '';
+		document.getElementById('modal-img-path').value       = w.full        || '';
+		document.getElementById('modal-size-input').value     = w.size        || 'cover';
+		document.getElementById('modal-position-input').value = w.position    || 'center';
+		if (w.full) {
+			document.getElementById('modal-img-preview').src          = w.full;
+			document.getElementById('modal-img-preview').style.display = 'block';
+			document.getElementById('modal-upload-zone').style.display = 'none';
+		}
+	}
+	document.getElementById('work-modal').style.display = 'flex';
+}
+document.getElementById('modal-close-btn').addEventListener('click',  () => { document.getElementById('work-modal').style.display = 'none'; });
+document.getElementById('modal-cancel-btn').addEventListener('click', () => { document.getElementById('work-modal').style.display = 'none'; });
+
+const uploadZone = document.getElementById('modal-upload-zone');
+const fileInput  = document.getElementById('modal-file-input');
+uploadZone.addEventListener('click', () => fileInput.click());
+uploadZone.addEventListener('dragover',  e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+uploadZone.addEventListener('drop', e => { e.preventDefault(); uploadZone.classList.remove('drag-over'); if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); });
+fileInput.addEventListener('change', () => { if (fileInput.files[0]) handleFile(fileInput.files[0]); });
+
+function handleFile(file) {
+	const destPath = 'images/fulls/' + file.name;
+	document.getElementById('modal-img-path').value = destPath;
+	document.getElementById('modal-file-name').textContent = '📁 Place this file at: images/fulls/' + file.name;
+	const reader = new FileReader();
+	reader.onload = e => {
+		document.getElementById('modal-img-preview').src          = e.target.result;
+		document.getElementById('modal-img-preview').style.display = 'block';
+		uploadZone.style.display = 'none';
+	};
+	reader.readAsDataURL(file);
+}
+document.getElementById('modal-img-path').addEventListener('input', function() {
+	const p = this.value.trim(); if (!p) return;
+	document.getElementById('modal-img-preview').src          = p;
+	document.getElementById('modal-img-preview').style.display = 'block';
+	uploadZone.style.display = 'none';
+});
+
+document.getElementById('modal-save-btn').addEventListener('click', () => {
+	const si    = parseInt(document.getElementById('modal-section-idx').value);
+	const wiRaw = document.getElementById('modal-work-idx').value;
+	const wi    = wiRaw !== '' ? parseInt(wiRaw) : null;
+	const title = document.getElementById('modal-title-input').value.trim();
+	const tag   = document.getElementById('modal-tag-input').value.trim();
+	const year  = document.getElementById('modal-year-input').value.trim();
+	const desc  = document.getElementById('modal-desc-input').value.trim();
+	const img   = document.getElementById('modal-img-path').value.trim();
+	const size  = document.getElementById('modal-size-input').value;
+	const pos   = document.getElementById('modal-position-input').value;
+
+	if (!title) { showToast('Please enter a title', 'error'); return; }
+	if (!img)   { showToast('Please enter an image path', 'error'); return; }
+
+	const work = { title, tag, description: desc, year, thumb: img, full: img, position: pos, size };
+	if (wi !== null) { sections[si].items[wi] = work; }
+	else             { sections[si].items.push(work); }
+
+	document.getElementById('work-modal').style.display = 'none';
+	saveData(); renderSections();
+	showToast(wi !== null ? 'Work updated!' : 'Work added!', 'success');
+});
+
+/* ── HELPERS ── */
+function showStatus(msg) {
+	const bar = document.getElementById('status-bar');
+	document.getElementById('status-msg').textContent = msg;
+	bar.classList.add('visible');
+	clearTimeout(bar._t);
+	bar._t = setTimeout(() => bar.classList.remove('visible'), 4000);
+}
+function esc(str) {
+	return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function showToast(msg, type) {
+	const t = document.getElementById('toast');
+	t.textContent = msg; t.className = 'show ' + (type||'');
+	clearTimeout(t._timer);
+	t._timer = setTimeout(() => { t.className = ''; }, 3000);
+}
+function confirmDialog(msg, onYes) {
+	const bd = document.createElement('div');
+	bd.className = 'confirm-backdrop';
+	bd.innerHTML = '<div class="confirm-box"><h3>Are you sure?</h3><p>' + esc(msg) + '</p><div class="confirm-btns"><button class="btn btn-outline" id="cfm-no">Cancel</button><button class="btn btn-danger" id="cfm-yes">Confirm</button></div></div>';
+	document.body.appendChild(bd);
+	bd.querySelector('#cfm-no').addEventListener('click',  () => document.body.removeChild(bd));
+	bd.querySelector('#cfm-yes').addEventListener('click', () => { document.body.removeChild(bd); onYes(); });
+}
+</script>
+</body>
+</html>

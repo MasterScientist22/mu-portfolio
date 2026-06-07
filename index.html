@@ -239,17 +239,31 @@
 			/* ── Viewer caption override ── */
 			#viewer .slide .caption {
 				padding-bottom: 1.5em;
+				background-image: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.4) 60%, transparent);
 			}
 
 			#viewer .slide .caption h2 {
-				font-size: 1.15em;
-				margin-bottom: 0.3em;
+				font-size: 1.2em;
+				margin-bottom: 0.4em;
+				color: #fff;
+				text-shadow: 0 1px 4px rgba(0,0,0,0.6);
 			}
 
 			#viewer .slide .caption p {
-				font-size: 0.85em;
-				margin: 0;
-				opacity: 0.75;
+				font-size: 0.88em;
+				margin: 0 0 0.4em;
+				color: rgba(255,255,255,0.85);
+				text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+				line-height: 1.6;
+			}
+
+			#viewer .slide .caption .caption-desc {
+				display: block;
+				font-size: 0.82em;
+				color: rgba(255,255,255,0.7);
+				margin-top: 0.35em;
+				text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+				line-height: 1.6;
 			}
 		</style>
 	</head>
@@ -260,6 +274,16 @@
 
 			<!-- Profile Panel (default view) -->
 			<div id="profile-panel">
+				<a href="admin.html" title="Admin" style="
+					position:absolute;
+					top:0.75em;
+					right:0.75em;
+					color:rgba(0,0,0,0.2);
+					border:none;
+					font-size:1.1em;
+					text-decoration:none;
+					transition:color 0.2s;
+				" onmouseover="this.style.color='#00D3B7'" onmouseout="this.style.color='rgba(0,0,0,0.2)'">&#9881;</a>
 				<div id="profile-photo-wrap" title="Click to view my works">
 					<!-- Replace images/profile.jpg with your actual photo -->
 					<img src="images/profile.jpg" alt="My Photo" id="profile-photo" onerror="this.src='images/thumbs/01.jpg'" />
@@ -293,6 +317,7 @@
 			<footer id="footer">
 				<ul class="copyright">
 					<li>&copy; Tshering Kelxang.</li>
+					<li><a href="admin.html" style="font-size:0.7em;opacity:0.35;border-bottom:none;color:inherit;" title="Admin">⚙</a></li>
 				</ul>
 			</footer>
 

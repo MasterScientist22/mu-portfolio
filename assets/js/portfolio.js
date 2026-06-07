@@ -5,207 +5,53 @@
  *   2. Click profile photo → sidebar switches to works list, viewer stays on profile photo
  *   3. Click a work → viewer loads that work's image, sidebar shows work detail
  *   4. Back buttons restore previous state
+ *
+ * HOW TO UPDATE YOUR PORTFOLIO ON GITHUB PAGES:
+ *   1. Open admin.html in your browser (no server needed — just open the file).
+ *   2. Add / edit your sections and works.
+ *   3. Click "Export Code for GitHub" — copy the generated snippet.
+ *   4. Paste it below, replacing everything between the two ═══ markers.
+ *   5. Save this file and commit + push to GitHub. Done!
  */
 
 (function ($) {
 
 	/* =====================================================================
-	 * WORKS DATA — organised by section
-	 * Each section: { label: string, items: [...works] }
-	 * Each work:
-	 *   title       : string
-	 *   tag         : category label
-	 *   description : shown in sidebar + as caption on the image
-	 *   year        : string
-	 *   thumb       : path to thumbnail image
-	 *   full        : path to full-size image
-	 *   position    : (optional) CSS background-position for the viewer
+	 * ═══ PASTE YOUR EXPORTED DATA HERE (replace only this block) ═══
 	 * ===================================================================== */
-	var sections = [
+	var PORTFOLIO_DATA = [
+		/* Example — delete these and paste your own exported data:
 		{
-			label: "Exhibition",
-			items: [
+			"label": "Photography",
+			"items": [
 				{
-					title: "Exhibition — Photo 1",
-					tag: "Exhibition",
-					description: "A piece from Tshering Kelxang's exhibition collection.",
-					year: "2024",
-					thumb: "images/fulls/Exhibition photo 1_kelxang.jpg",
-					full:  "images/fulls/Exhibition photo 1_kelxang.jpg",
-					position: "center",
-					size: "contain"
-				},
-				{
-					title: "Exhibition — Photo 2",
-					tag: "Exhibition",
-					description: "A piece from Tshering Kelxang's exhibition collection.",
-					year: "2024",
-					thumb: "images/fulls/Exhibition photo 2_kelxang.jpg",
-					full:  "images/fulls/Exhibition photo 2_kelxang.jpg",
-					position: "center",
-					size: "contain"
-				},
-				{
-					title: "Exhibition — Photo 3",
-					tag: "Exhibition",
-					description: "A piece from Tshering Kelxang's exhibition collection.",
-					year: "2024",
-					thumb: "images/fulls/Exhibition photo 3_kelxang.jpg",
-					full:  "images/fulls/Exhibition photo 3_kelxang.jpg",
-					position: "center",
-					size: "contain"
-				}
-			]
-		},
-		{
-			label: "Post Card",
-			items: [
-				{
-					title: "Post Card 1",
-					tag: "Post Card",
-					description: "An original postcard design by Tshering Kelxang.",
-					year: "2024",
-					thumb: "images/fulls/Post card 1_kelxang.jpg",
-					full:  "images/fulls/Post card 1_kelxang.jpg",
-					position: "center",
-					size: "contain"
-				},
-				{
-					title: "Post Card 2",
-					tag: "Post Card",
-					description: "An original postcard design by Tshering Kelxang.",
-					year: "2024",
-					thumb: "images/fulls/Post card 2_kelxang.jpg",
-					full:  "images/fulls/Post card 2_kelxang.jpg",
-					position: "center",
-					size: "contain"
-				},
-				{
-					title: "Post Card 3",
-					tag: "Post Card",
-					description: "An original postcard design by Tshering Kelxang.",
-					year: "2024",
-					thumb: "images/fulls/Post card 3_kelxang.jpg",
-					full:  "images/fulls/Post card 3_kelxang.jpg",
-					position: "center",
-					size: "contain"
-				}
-			]
-		},
-		{
-			label: "Other Works",
-			items: [
-				{
-					title: "Dragon's Lair — Fan Edit",
-					tag: "Videography",
-					description: "A cinematic fan-made shortfilm inspired by open-world RPGs. Shot, edited, and colour-graded entirely by Tshering — blending dramatic lighting with game-inspired framing.",
-					year: "2024",
-					thumb: "images/thumbs/01.jpg",
-					full: "images/fulls/01.jpg",
-					position: "center"
-				},
-				{
-					title: "Phantom Rig",
-					tag: "Animation Rigging",
-					description: "A full-body character rig built in Blender for a ghost-type game character. Features custom IK/FK switching, dynamic cloth simulation, and facial shape keys.",
-					year: "2024",
-					thumb: "images/thumbs/02.jpg",
-					full: "images/fulls/02.jpg",
-					position: "center"
-				},
-				{
-					title: "Highlands at Dusk",
-					tag: "Photography",
-					description: "A golden-hour photography series captured across Bhutan's highland valleys. Each shot explores the interplay of mist, light, and landscape without any post-processing filters.",
-					year: "2024",
-					thumb: "images/thumbs/03.jpg",
-					full: "images/fulls/03.jpg",
-					position: "top center"
-				},
-				{
-					title: "Neon Arcade — Brand Kit",
-					tag: "Graphic Design",
-					description: "Full visual identity for an esports café — logo, colour system, merchandise mockups, and social media templates. Inspired by retro arcade aesthetics fused with modern neon.",
-					year: "2024",
-					thumb: "images/thumbs/04.jpg",
-					full: "images/fulls/04.jpg",
-					position: "center"
-				},
-				{
-					title: "Level Up — Game Montage",
-					tag: "Videography",
-					description: "A high-energy gaming montage edit combining screen-captured gameplay with behind-the-scenes reaction footage. Fast cuts synced to a custom audio mix.",
-					year: "2023",
-					thumb: "images/thumbs/05.jpg",
-					full: "images/fulls/05.jpg",
-					position: "top center"
-				},
-				{
-					title: "Shadow Warrior Rig",
-					tag: "Animation Rigging",
-					description: "A combat-ready humanoid rig designed for a 3D action game prototype. Includes a modular weapon attachment system, hit-reaction bones, and a procedural spine.",
-					year: "2023",
-					thumb: "images/thumbs/06.jpg",
-					full: "images/fulls/06.jpg",
-					position: "center"
-				},
-				{
-					title: "Street Portraits — Thimphu",
-					tag: "Photography",
-					description: "Candid portrait series documenting everyday life on the streets of Thimphu. Shot on a 50mm prime, focused on authentic emotion and natural light.",
-					year: "2023",
-					thumb: "images/thumbs/07.jpg",
-					full: "images/fulls/07.jpg",
-					position: "center"
-				},
-				{
-					title: "Void Racer — UI Design",
-					tag: "Graphic Design",
-					description: "HUD and menu UI design for an indie sci-fi racing game. Focused on readability at high speed — minimal, glowing interfaces that don't obscure the action.",
-					year: "2023",
-					thumb: "images/thumbs/08.jpg",
-					full: "images/fulls/08.jpg",
-					position: "center"
-				},
-				{
-					title: "The Last Run",
-					tag: "Videography",
-					description: "A short documentary following a local competitive gamer during the final hours of a 24-hour gaming marathon. Raw, unscripted, and emotionally charged.",
-					year: "2022",
-					thumb: "images/thumbs/09.jpg",
-					full: "images/fulls/09.jpg",
-					position: "left center"
-				},
-				{
-					title: "Creature Rig — Serpent King",
-					tag: "Animation Rigging",
-					description: "A complex quadruped-hybrid creature rig featuring a multi-segment spine, dynamic tail physics, and wing membrane simulation. Built for a fantasy game demo.",
-					year: "2022",
-					thumb: "images/thumbs/10.jpg",
-					full: "images/fulls/10.jpg",
-					position: "center"
-				},
-				{
-					title: "Frozen Light",
-					tag: "Photography",
-					description: "Winter macro photography series — ice crystals, frost patterns, and frozen water surfaces captured at dawn. Each frame is a single exposure, no compositing.",
-					year: "2022",
-					thumb: "images/thumbs/11.jpg",
-					full: "images/fulls/11.jpg",
-					position: "center"
-				},
-				{
-					title: "GG Apparel — Merch Line",
-					tag: "Graphic Design",
-					description: "Streetwear-meets-gaming merch collection. Designed a line of 8 graphic tees and hoodies for a local gaming community, from concept art through print-ready files.",
-					year: "2022",
-					thumb: "images/thumbs/12.jpg",
-					full: "images/fulls/12.jpg",
-					position: "center"
+					"title": "Mountain Sunrise",
+					"tag": "Photography",
+					"description": "Shot at 4am above the clouds.",
+					"year": "2024",
+					"thumb": "images/fulls/photo1.jpg",
+					"full": "images/fulls/photo1.jpg",
+					"position": "center",
+					"size": "cover"
 				}
 			]
 		}
+		*/
 	];
+	/* ═══ END OF DATA BLOCK ═══ */
+
+	/* If admin has previewed changes locally via localStorage, prefer that.
+	 * On GitHub Pages, localStorage is empty so PORTFOLIO_DATA above is used. */
+	var sections = (function() {
+		try {
+			var saved = localStorage.getItem('portfolio_sections');
+			if (saved) {
+				var parsed = JSON.parse(saved);
+				if (parsed && parsed.length > 0) return parsed;
+			}
+		} catch(e) {}
+		return PORTFOLIO_DATA;
+	})();
 
 	/* Flat works array (section + index stored on each for navigation) */
 	var works = [];
@@ -488,9 +334,11 @@
 				);
 			}
 
+			var tagYear = [w.tag, w.year].filter(Boolean).join(' — ');
 			var captionHTML =
 				'<h2>' + w.title + '</h2>' +
-				'<p>' + w.tag + ' &mdash; ' + w.year + '</p>';
+				(tagYear ? '<p>' + tagYear + '</p>' : '') +
+				(w.description ? '<span class="caption-desc">' + w.description + '</span>' : '');
 
 			Viewer.load(w.full, w.position || 'center', captionHTML, w.size || 'cover');
 			Viewer.showNav(true);
