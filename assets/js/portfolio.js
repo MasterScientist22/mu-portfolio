@@ -497,6 +497,10 @@ var PORTFOLIO_PROFILE = {
 			state.view = 'profile';
 			state.activeIndex = null;
 
+			if (breakpoints.active('<=xsmall') && $body.hasClass('fullscreen')) {
+				this.toggleSidebar();
+			}
+
 			$workDetailPanel.hide().removeClass('visible');
 			$worksPanel.hide().css('display', '');
 			$profilePanel.show();
@@ -509,6 +513,10 @@ var PORTFOLIO_PROFILE = {
 		/* ── View: Works List ── */
 		showWorksView: function () {
 			state.view = 'works';
+
+			if (breakpoints.active('<=xsmall') && $body.hasClass('fullscreen')) {
+				this.toggleSidebar();
+			}
 
 			$profilePanel.hide();
 			$workDetailPanel.hide().removeClass('visible');
@@ -556,6 +564,11 @@ var PORTFOLIO_PROFILE = {
 
 			Viewer.load(w.full, w.position || 'center', captionHTML, w.size || 'cover');
 			Viewer.showNav(true);
+
+			/* On mobile, hide sidebar automatically to show the work */
+			if (breakpoints.active('<=xsmall')) {
+				Portfolio.toggleSidebar();
+			}
 		},
 
 		/* ── Navigate within works ── */
@@ -575,6 +588,15 @@ var PORTFOLIO_PROFILE = {
 			if ($body.hasClass('fullscreen')) {
 				$body.removeClass('fullscreen');
 				$main.focus();
+				/* On mobile, scroll to the active item when sidebar is shown */
+				if (breakpoints.active('<=xsmall')) {
+					var $activeItem = $worksList.find('.work-item.active');
+					if ($activeItem.length) {
+						$worksList.scrollTop(
+							$worksList.scrollTop() + $activeItem.position().top - $worksList.height() / 2
+						);
+					}
+				}
 			} else {
 				$body.addClass('fullscreen');
 				$main.blur();
