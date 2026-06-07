@@ -24,9 +24,9 @@
 		"label": "Exhibition",
 		"items": [
 			{
-				"title": "Photo 1",
+				"title": "Thimphu City",
 				"tag": "",
-				"description": "I took this photo to capture the beauty of Thimphu from a higher viewpoint. From here, I could see how the city stretches across the valley, with buildings nestled among the hills. The road running through the center adds a sense of direction and movement, while the surrounding greenery highlights Bhutan's natural beauty. To me, this image reflects the peaceful blend of urban development and nature that makes Thimphu unique. great view",
+				"description": "I took this photo to capture the beauty of Thimphu from a higher viewpoint. From here, I could see how the city stretches across the valley, with buildings nestled among the hills. The road running through the center adds a sense of direction and movement, while the surrounding greenery highlights Bhutan's natural beauty. To me, this image reflects the peaceful blend of urban development and nature that makes Thimphu unique.",
 				"year": "",
 				"thumb": "images/fulls/Exhibition photo 1_kelxang.jpg",
 				"full": "images/fulls/Exhibition photo 1_kelxang.jpg",
@@ -34,7 +34,7 @@
 				"size": "contain"
 			},
 			{
-				"title": "Photo 2",
+				"title": "Celebration",
 				"tag": "",
 				"description": "This photograph was taken during the inaugural Chimi Lhakhang Festival. It showcases local women performing a traditional Bhutanese folk dance while dressed in vibrant national attire and traditional jewelry. The image highlights Bhutan's living cultural heritage, where music, dance, and community gatherings play an important role in preserving traditions. The festive setting and participation of community members demonstrate the cultural significance of the event. As the first Chimi Lhakhang Festival, this celebration marked an important milestone in promoting and preserving local customs and traditions for future generations.",
 				"year": "",
@@ -44,7 +44,7 @@
 				"size": "contain"
 			},
 			{
-				"title": "Photo 3",
+				"title": "Maymay",
 				"tag": "",
 				"description": "While walking around the Chimi Lhakhang Festival, I noticed this elderly man sitting alone under a tree and quietly enjoying the event. Unlike the busy crowd around him, he seemed completely at peace, simply taking in the atmosphere and watching the celebrations unfold. His gentle expression and relaxed posture caught my attention, and I felt it was a moment worth capturing. Dressed in traditional Bhutanese attire, he reflects the deep connection many Bhutanese people have with their culture and community. For me, this photograph is a reminder that festivals are not only about performances and celebrations but also about the quiet moments of happiness and reflection that people experience in their own way.",
 				"year": "",
@@ -59,7 +59,7 @@
 		"label": "Post Card",
 		"items": [
 			{
-				"title": "Photo 1",
+				"title": "Prayer Wheels",
 				"tag": "",
 				"description": "",
 				"year": "",
@@ -69,7 +69,7 @@
 				"size": "contain"
 			},
 			{
-				"title": "Photo 2",
+				"title": "Tashichho Dzong",
 				"tag": "",
 				"description": "",
 				"year": "",
@@ -79,7 +79,7 @@
 				"size": "contain"
 			},
 			{
-				"title": "Photo 3",
+				"title": "Tsatsa",
 				"tag": "",
 				"description": "",
 				"year": "",
