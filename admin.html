@@ -221,7 +221,24 @@
 		.confirm-btns   { display: flex; gap: 0.6em; justify-content: center; }
 
 		.empty-state { text-align: center; padding: 1.5em; color: var(--muted); font-size: 0.85em; }
-		.info-note { background: #fffbea; border: 1px solid #f6d860; border-radius: 8px; padding: 0.75em 1em; font-size: 0.8em; color: #7a5c00; margin-bottom: 1em; line-height: 1.6; }
+		/* ── GitHub publish button ── */
+		#github-publish-btn {
+			background: #24292f; color: white; border-color: #24292f;
+		}
+		#github-publish-btn:hover { opacity: 0.85; }
+		#github-publish-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+		/* ── Unsaved warning banner ── */
+		#unsaved-banner {
+			display: none;
+			background: #fff3cd; border: 1.5px solid #ffc107;
+			border-radius: 8px; padding: 0.85em 1.25em;
+			margin-bottom: 1.25em; font-size: 0.85em; color: #856404;
+			align-items: center; gap: 0.75em; justify-content: space-between;
+		}
+		#unsaved-banner.visible { display: flex; }
+		#unsaved-banner strong { font-weight: 700; }
+		#unsaved-banner .banner-btns { display: flex; gap: 0.5em; flex-shrink: 0; }
 	</style>
 </head>
 <body>
@@ -252,13 +269,68 @@
 			<div class="toolbar-title">Sections &amp; Works</div>
 			<div class="toolbar-actions">
 				<button class="btn btn-outline" id="add-section-btn">＋ Add Section</button>
-				<button class="btn btn-green"   id="export-btn">📋 Export Code for GitHub</button>
+				<button class="btn btn-green"   id="export-btn">📋 Export Code</button>
+				<button class="btn" id="github-publish-btn">🚀 Publish to GitHub</button>
 				<button class="btn btn-danger btn-sm" id="clear-all-btn">🗑 Clear All</button>
 			</div>
 		</div>
 
+		<!-- UNSAVED WARNING BANNER -->
+		<div id="unsaved-banner">
+			<span>⚠️ <strong>You have unpublished changes.</strong> Your edits are saved locally but not live on GitHub Pages yet.</span>
+			<div class="banner-btns">
+				<button class="btn btn-sm" id="github-publish-btn">🚀 Publish to GitHub</button>
+				<button class="btn btn-outline btn-sm" id="export-btn-banner">📋 Export manually</button>
+			</div>
+		</div>
+
 		<div class="info-note">
-			💡 <strong>How to publish:</strong> Add your works below, then click the green <strong>📋 Export Code for GitHub</strong> button. Copy the snippet it generates, paste it into <code>assets/js/portfolio.js</code>, and push to GitHub.
+			💡 <strong>Two ways to publish:</strong>
+			Either click <strong>🚀 Publish to GitHub</strong> (automatic, needs a GitHub token set up below)
+			or use <strong>📋 Export Code</strong> to copy &amp; paste manually into <code>portfolio.js</code>.
+		</div>
+
+		<!-- GITHUB SETTINGS CARD -->
+		<div class="section-card" id="github-settings-card">
+			<div class="section-header" onclick="this.parentElement.classList.toggle('collapsed')">
+				<div class="section-header-left">
+					<span class="section-chevron">▼</span>
+					<span class="section-label">⚙️ GitHub Auto-Publish Settings</span>
+					<span class="section-count" id="github-status-badge">not configured</span>
+				</div>
+			</div>
+			<div class="section-body">
+				<div class="info-note" style="margin-bottom:1em;">
+					🔑 <strong>How to get a token:</strong> Go to
+					<a href="https://github.com/settings/tokens/new" target="_blank">github.com/settings/tokens/new</a>,
+					create a <strong>Classic token</strong>, tick the <strong>repo</strong> scope, copy it and paste below.
+					This is stored only in your browser’s localStorage — never sent anywhere except GitHub’s own API.
+				</div>
+				<div class="form-row">
+					<div class="form-group">
+						<label>GitHub Username</label>
+						<input type="text" id="gh-username" placeholder="e.g. tshering" />
+					</div>
+					<div class="form-group">
+						<label>Repository Name</label>
+						<input type="text" id="gh-repo" placeholder="e.g. my-portfolio" />
+					</div>
+				</div>
+				<div class="form-row">
+					<div class="form-group">
+						<label>Branch</label>
+						<input type="text" id="gh-branch" placeholder="main" />
+					</div>
+					<div class="form-group">
+						<label>Personal Access Token</label>
+						<input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxx" />
+					</div>
+				</div>
+				<div style="display:flex;gap:0.6em;">
+					<button class="btn btn-teal" id="save-github-settings-btn">💾 Save Settings</button>
+					<button class="btn btn-outline" id="clear-github-settings-btn">🗑 Clear Token</button>
+				</div>
+			</div>
 		</div>
 
 		<!-- PROFILE EDITOR -->
@@ -421,6 +493,7 @@ function loadData() {
 		sections = raw ? JSON.parse(raw) : [];
 	} catch(e) { sections = []; }
 	loadProfile();
+	loadGithubSettings();
 	renderSections();
 	showStatus('Loaded ' + sections.length + ' section(s).');
 }
@@ -444,7 +517,8 @@ document.getElementById('save-profile-btn').addEventListener('click', () => {
 	try {
 		localStorage.setItem(PROFILE_KEY, JSON.stringify({ name, bio }));
 		showToast('✅ Profile saved!', 'success');
-		showStatus('Profile saved. Remember to export and update index.html for GitHub.');
+		showUnsavedBanner();
+		showStatus('Profile saved. Click 🚀 Publish to GitHub to go live.');
 	} catch(e) { showToast('Save failed', 'error'); }
 });
 
@@ -457,8 +531,9 @@ document.getElementById('reset-profile-btn').addEventListener('click', () => {
 function saveData() {
 	try {
 		localStorage.setItem(STORAGE_KEY, JSON.stringify(sections));
-		showStatus('Saved! Click "Export Code for GitHub" to publish.');
+		showStatus('Saved locally. Click 🚀 Publish to GitHub to go live.');
 		showToast('✅ Saved!', 'success');
+		showUnsavedBanner();
 	} catch(e) {
 		showToast('Save failed: ' + e.message, 'error');
 	}
@@ -667,6 +742,145 @@ document.getElementById('modal-save-btn').addEventListener('click', () => {
 	document.getElementById('work-modal').style.display = 'none';
 	saveData(); renderSections();
 	showToast(wi !== null ? 'Work updated!' : 'Work added!', 'success');
+});
+
+/* ── GITHUB SETTINGS ── */
+const GH_KEY = 'portfolio_github';
+
+function loadGithubSettings() {
+	try {
+		const raw = localStorage.getItem(GH_KEY);
+		if (!raw) return;
+		const g = JSON.parse(raw);
+		document.getElementById('gh-username').value = g.username || '';
+		document.getElementById('gh-repo').value     = g.repo     || '';
+		document.getElementById('gh-branch').value   = g.branch   || 'main';
+		document.getElementById('gh-token').value    = g.token    || '';
+		updateGithubBadge(g);
+	} catch(e) {}
+}
+
+function updateGithubBadge(g) {
+	const badge = document.getElementById('github-status-badge');
+	if (g && g.username && g.repo && g.token) {
+		badge.textContent = '✅ ' + g.username + '/' + g.repo;
+		badge.style.background = 'rgba(0,211,183,0.15)';
+		badge.style.color = '#00695c';
+	} else {
+		badge.textContent = 'not configured';
+		badge.style.background = '';
+		badge.style.color = '';
+	}
+}
+
+document.getElementById('save-github-settings-btn').addEventListener('click', () => {
+	const g = {
+		username: document.getElementById('gh-username').value.trim(),
+		repo:     document.getElementById('gh-repo').value.trim(),
+		branch:   document.getElementById('gh-branch').value.trim() || 'main',
+		token:    document.getElementById('gh-token').value.trim()
+	};
+	if (!g.username || !g.repo || !g.token) { showToast('Please fill in all fields', 'error'); return; }
+	localStorage.setItem(GH_KEY, JSON.stringify(g));
+	updateGithubBadge(g);
+	showToast('✅ GitHub settings saved!', 'success');
+});
+
+document.getElementById('clear-github-settings-btn').addEventListener('click', () => {
+	localStorage.removeItem(GH_KEY);
+	['gh-username','gh-repo','gh-branch','gh-token'].forEach(id => document.getElementById(id).value = '');
+	document.getElementById('gh-branch').value = 'main';
+	updateGithubBadge(null);
+	showToast('GitHub settings cleared', 'success');
+});
+
+/* ── UNSAVED BANNER ── */
+function showUnsavedBanner() {
+	document.getElementById('unsaved-banner').classList.add('visible');
+}
+function hideUnsavedBanner() {
+	document.getElementById('unsaved-banner').classList.remove('visible');
+}
+document.getElementById('export-btn-banner').addEventListener('click', () => {
+	document.getElementById('export-btn').click();
+});
+
+/* ── GITHUB AUTO-PUBLISH ── */
+async function publishToGitHub() {
+	const raw = localStorage.getItem(GH_KEY);
+	if (!raw) {
+		showToast('⚠️ Set up GitHub settings first', 'error');
+		document.getElementById('github-settings-card').classList.remove('collapsed');
+		document.getElementById('github-settings-card').scrollIntoView({ behavior: 'smooth' });
+		return;
+	}
+	const g = JSON.parse(raw);
+	const btn = document.getElementById('github-publish-btn');
+	btn.disabled = true;
+	btn.textContent = '⏳ Publishing...';
+
+	try {
+		// Build the new file content
+		const profile = JSON.parse(localStorage.getItem(PROFILE_KEY) || JSON.stringify(DEFAULT_PROFILE));
+		const json    = JSON.stringify(sections, null, '\t');
+		const snippet =
+			'var PORTFOLIO_DATA = ' + json + ';\n\n' +
+			'var PORTFOLIO_PROFILE = ' + JSON.stringify(profile, null, '\t') + ';';
+
+		// Fetch current portfolio.js to get its SHA (required by GitHub API)
+		const filePath = 'assets/js/portfolio.js';
+		const apiBase  = 'https://api.github.com/repos/' + g.username + '/' + g.repo + '/contents/' + filePath;
+		const headers  = { 'Authorization': 'token ' + g.token, 'Accept': 'application/vnd.github.v3+json' };
+
+		const getRes = await fetch(apiBase + '?ref=' + g.branch, { headers });
+		if (!getRes.ok) throw new Error('Could not fetch portfolio.js from GitHub. Check your username, repo, and token.');
+		const fileData = await getRes.json();
+		// Decode base64 safely, preserving non-ASCII characters like ═ and —
+		const currentContent = decodeURIComponent(escape(atob(fileData.content.replace(/\n/g, ''))));
+
+		// Replace only the data block inside the file
+		const startMarker = '/* =====================================================================\n\t * \u2550\u2550\u2550 PASTE YOUR EXPORTED DATA HERE (replace only this block) \u2550\u2550\u2550\n\t * ===================================================================== */';
+		const endMarker   = '/* \u2550\u2550\u2550 END OF DATA BLOCK \u2550\u2550\u2550 */';
+		const startIdx = currentContent.indexOf(startMarker);
+		const endIdx   = currentContent.indexOf(endMarker) + endMarker.length;
+		if (startIdx === -1 || endIdx === -1) throw new Error('Could not find data block markers in portfolio.js. Make sure the file has not been manually edited.');
+
+		const newContent = currentContent.slice(0, startIdx) +
+			startMarker + '\n\t' +
+			snippet + '\n\t' +
+			endMarker +
+			currentContent.slice(endIdx);
+
+		// Push the updated file
+		const putRes = await fetch(apiBase, {
+			method: 'PUT',
+			headers: { ...headers, 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				message: 'Update portfolio data from admin',
+				content: btoa(unescape(encodeURIComponent(newContent))),
+				sha: fileData.sha,
+				branch: g.branch
+			})
+		});
+		if (!putRes.ok) {
+			const err = await putRes.json();
+			throw new Error(err.message || 'GitHub API error');
+		}
+		showToast('✅ Published! GitHub is rebuilding your site...', 'success');
+		showStatus('✅ Published to GitHub! Your site will update in ~1 minute.');
+		hideUnsavedBanner();
+	} catch(e) {
+		showToast('❌ ' + e.message, 'error');
+		showStatus('❌ Publish failed: ' + e.message);
+	} finally {
+		btn.disabled = false;
+		btn.textContent = '🚀 Publish to GitHub';
+	}
+}
+
+// Wire up all publish buttons
+document.querySelectorAll('#github-publish-btn').forEach(btn => {
+	btn.addEventListener('click', publishToGitHub);
 });
 
 /* ── HELPERS ── */
