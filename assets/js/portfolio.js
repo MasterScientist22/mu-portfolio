@@ -199,7 +199,7 @@
 
 var PORTFOLIO_PROFILE = {
 	"name": "Tshering Kelxang",
-	"bio": "Gamer. Videographer. Animation Rigger. Photographer. Graphic Designer. Crafting worlds through lenses, rigs, and pixels — one frame at a time."
+	"bio": ""
 };
 	/* ═══ END OF DATA BLOCK ═══ */
 
