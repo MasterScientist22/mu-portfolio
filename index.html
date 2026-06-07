@@ -7,7 +7,18 @@
 		<title>Tshering Kelxang — Portfolio</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
+		<meta name="description" content="Gamer. Videographer. Animation Rigger. Photographer. Graphic Designer. Portfolio by Tshering Kelxang" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<!-- Performance optimizations -->
+		<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link rel="dns-prefetch" href="https://fonts.googleapis.com">
+		<link rel="dns-prefetch" href="https://fonts.gstatic.com">
+
+		<!-- Critical CSS - load asynchronously with fallback -->
+		<link rel="preload" href="assets/css/main.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+		<noscript><link rel="stylesheet" href="assets/css/main.css" /></noscript>
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
 		<style>
 			/* ── Profile Panel ── */
@@ -32,6 +43,7 @@
 				border: 3px solid #00D3B7;
 				display: block;
 				transition: box-shadow 0.25s ease, transform 0.25s ease;
+				will-change: transform;
 			}
 
 			#profile-photo-wrap:hover img {
@@ -134,6 +146,7 @@
 				flex-shrink: 0;
 				border: 2px solid transparent;
 				transition: border-color 0.2s;
+				content-visibility: auto;
 			}
 
 			.work-item.active .work-thumb,
@@ -286,7 +299,7 @@
 				" onmouseover="this.style.color='#00D3B7'" onmouseout="this.style.color='rgba(0,0,0,0.2)'">&#9881;</a>
 				<div id="profile-photo-wrap" title="Click to view my works">
 					<!-- Replace images/profile.jpg with your actual photo -->
-					<img src="images/profile.jpg" alt="My Photo" id="profile-photo" loading="lazy" onerror="this.src='images/thumbs/01.jpg'" />
+					<img src="images/profile.jpg" alt="My Photo" id="profile-photo" width="120" height="120" loading="lazy" decoding="async" onerror="this.src='images/thumbs/01.jpg'" />
 					<span class="click-hint">▸ View my works</span>
 				</div>
 				<h1 id="profile-name"></h1>
@@ -326,11 +339,22 @@
 		<!-- Hidden thumbnails section (still needed by main.js viewer engine) -->
 		<section id="thumbnails" style="display:none;"></section>
 
-		<!-- Scripts -->
-		<script src="assets/js/jquery.min.js"></script>
-		<script src="assets/js/browser.min.js"></script>
-		<script src="assets/js/breakpoints.min.js"></script>
-		<script src="assets/js/portfolio.js"></script>
+		<!-- Scripts - async/defer for better performance -->
+		<script src="assets/js/jquery.min.js" defer></script>
+		<script src="assets/js/browser.min.js" defer></script>
+		<script src="assets/js/breakpoints.min.js" defer></script>
+		<script src="assets/js/portfolio.js" defer></script>
+
+		<!-- Service Worker for caching (optional) -->
+		<script>
+			if ('serviceWorker' in navigator) {
+				window.addEventListener('load', function() {
+					navigator.serviceWorker.register('sw.js').catch(function() {
+						// Service worker registration failed, no problem - site still works
+					});
+				});
+			}
+		</script>
 
 	</body>
 </html>

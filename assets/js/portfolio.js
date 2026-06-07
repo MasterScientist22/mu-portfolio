@@ -355,15 +355,39 @@ var PORTFOLIO_PROFILE = {
 			self.$slide.addClass('loading');
 			self.$slideImage.css('opacity', 0);
 
+			// Use decode() for better performance
 			$img.on('load', function () {
-				self.$slideImage
-					.css('background-image', 'url(' + encodedUrl + ')')
-					.css('background-position', position || 'center')
-					.css('background-size', bgSize)
-					.css('opacity', 1);
-				self.$slideCaption.html(captionHTML || '');
-				self.$slide.removeClass('loading');
-				self.locked = false;
+				var img = this;
+				if (img.decode) {
+					img.decode().then(function() {
+						self.$slideImage
+							.css('background-image', 'url(' + encodedUrl + ')')
+							.css('background-position', position || 'center')
+							.css('background-size', bgSize)
+							.css('opacity', 1);
+						self.$slideCaption.html(captionHTML || '');
+						self.$slide.removeClass('loading');
+						self.locked = false;
+					}).catch(function() {
+						self.$slideImage
+							.css('background-image', 'url(' + encodedUrl + ')')
+							.css('background-position', position || 'center')
+							.css('background-size', bgSize)
+							.css('opacity', 1);
+						self.$slideCaption.html(captionHTML || '');
+						self.$slide.removeClass('loading');
+						self.locked = false;
+					});
+				} else {
+					self.$slideImage
+						.css('background-image', 'url(' + encodedUrl + ')')
+						.css('background-position', position || 'center')
+						.css('background-size', bgSize)
+						.css('opacity', 1);
+					self.$slideCaption.html(captionHTML || '');
+					self.$slide.removeClass('loading');
+					self.locked = false;
+				}
 			}).on('error', function () {
 				self.$slideImage
 					.css('background-image', 'url(' + profileFallbackImage + ')')
@@ -453,7 +477,7 @@ var PORTFOLIO_PROFILE = {
 					var idx = workIndex++;
 					var $item = $(
 						'<button class="work-item" data-index="' + idx + '">' +
-							'<img class="work-thumb" src="' + w.thumb + '" alt="' + w.title + '" loading="lazy" />' +
+							'<img class="work-thumb" src="' + w.thumb + '" alt="' + w.title + '" width="52" height="52" loading="lazy" decoding="async" />' +
 							'<div class="work-meta">' +
 								'<div class="work-title">' + w.title + '</div>' +
 								'<div class="work-tag">' + w.tag + '</div>' +
