@@ -293,7 +293,7 @@ var PORTFOLIO_PROFILE = {
 					var idx = workIndex++;
 					var $item = $(
 						'<button class="work-item" data-index="' + idx + '">' +
-							'<img class="work-thumb" src="' + w.thumb + '" alt="' + w.title + '" />' +
+							'<img class="work-thumb" src="' + w.thumb + '" alt="' + w.title + '" loading="lazy" />' +
 							'<div class="work-meta">' +
 								'<div class="work-title">' + w.title + '</div>' +
 								'<div class="work-tag">' + w.tag + '</div>' +

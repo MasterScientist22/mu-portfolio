@@ -97,6 +97,8 @@
 		}
 		.work-row:hover { border-color: var(--border); background: white; }
 		.work-row-thumb { width: 48px; height: 48px; border-radius: 6px; object-fit: cover; flex-shrink: 0; background: var(--border); }
+		.work-row-thumb[loading="lazy"] { opacity: 0.7; transition: opacity 0.3s; }
+		.work-row-thumb[loading="lazy"].loaded { opacity: 1; }
 		.work-row-info { flex: 1; min-width: 0; }
 		.work-row-title { font-size: 0.88em; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 		.work-row-meta  { font-size: 0.75em; color: var(--muted); margin-top: 0.15em; }
@@ -628,7 +630,7 @@ function renderSectionCard(sec, si, container) {
 		const row = document.createElement('div');
 		row.className = 'work-row';
 		row.innerHTML = `
-			<img class="work-row-thumb" src="${esc(w.thumb||w.full||'')}" alt="" onerror="this.style.opacity='0.2'" />
+			<img class="work-row-thumb" src="${esc(w.thumb||w.full||'')}" alt="" loading="lazy" onerror="this.style.opacity='0.2'" />
 			<div class="work-row-info">
 				<div class="work-row-title">${esc(w.title)}</div>
 				<div class="work-row-meta">${esc(w.tag)} · ${esc(w.year)}</div>
