@@ -26,7 +26,7 @@
 			{
 				"title": "Photo 1",
 				"tag": "",
-				"description": "I took this photo to capture the beauty of Thimphu from a higher viewpoint. From here, I could see how the city stretches across the valley, with buildings nestled among the hills. The road running through the center adds a sense of direction and movement, while the surrounding greenery highlights Bhutan's natural beauty. To me, this image reflects the peaceful blend of urban development and nature that makes Thimphu unique.",
+				"description": "I took this photo to capture the beauty of Thimphu from a higher viewpoint. From here, I could see how the city stretches across the valley, with buildings nestled among the hills. The road running through the center adds a sense of direction and movement, while the surrounding greenery highlights Bhutan's natural beauty. To me, this image reflects the peaceful blend of urban development and nature that makes Thimphu unique. great view",
 				"year": "",
 				"thumb": "images/fulls/Exhibition photo 1_kelxang.jpg",
 				"full": "images/fulls/Exhibition photo 1_kelxang.jpg",
@@ -96,12 +96,12 @@
 			{
 				"title": "My view",
 				"tag": "",
-				"description": "From where I stood, the detailed  architecture caught my attention. I photographed the vibrant carvings and traditional design to showcase the beauty and cultural heritage I witnessed firsthand.",
+				"description": "From where I stood, the detailed architecture caught my attention. I photographed the vibrant carvings and traditional design to showcase the beauty and cultural heritage I witnessed firsthand.",
 				"year": "",
 				"thumb": "images/fulls/1.webp",
 				"full": "images/fulls/1.webp",
 				"position": "center",
-				"size": "contain"
+				"size": "cover"
 			},
 			{
 				"title": "Peace Above the Mountains",
@@ -111,7 +111,7 @@
 				"thumb": "images/fulls/2.webp",
 				"full": "images/fulls/2.webp",
 				"position": "center",
-				"size": "cover"
+				"size": "contain"
 			},
 			{
 				"title": "Valley",
@@ -151,12 +151,12 @@
 				"thumb": "images/fulls/6.webp",
 				"full": "images/fulls/6.webp",
 				"position": "center",
-				"size": "cover"
+				"size": "contain"
 			},
 			{
 				"title": "Bridge",
 				"tag": "",
-				"description": "Cars travel across a narrow bridge in Thimphu, surrounded by tall green trees and rocky hills. The scene reflects daily life in Thimphu, where roads and bridges link people through the mountains and forests.",
+				"description": "Car's travel across a narrow bridge in Thimphu, surrounded by tall green trees and rocky hills. The scene reflects daily life in Thimphu, where roads and bridges link people through the mountains and forests.",
 				"year": "",
 				"thumb": "images/fulls/7.webp",
 				"full": "images/fulls/7.webp",
