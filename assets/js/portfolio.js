@@ -101,7 +101,7 @@
 				"thumb": "images/fulls/1.webp",
 				"full": "images/fulls/1.webp",
 				"position": "center",
-				"size": "cover"
+				"size": "contain"
 			},
 			{
 				"title": "Peace Above the Mountains",
@@ -111,7 +111,7 @@
 				"thumb": "images/fulls/2.webp",
 				"full": "images/fulls/2.webp",
 				"position": "center",
-				"size": "contain"
+				"size": "cover"
 			},
 			{
 				"title": "Valley",
@@ -151,7 +151,7 @@
 				"thumb": "images/fulls/6.webp",
 				"full": "images/fulls/6.webp",
 				"position": "center",
-				"size": "contain"
+				"size": "cover"
 			},
 			{
 				"title": "Bridge",
