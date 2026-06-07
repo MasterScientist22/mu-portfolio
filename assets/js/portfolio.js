@@ -455,11 +455,22 @@ var PORTFOLIO_PROFILE = {
 				Portfolio.toggleSidebar();
 			});
 
-			$(window).on('load', function () {
+			// Handle load event.
+			var removePreload = function () {
 				$body.removeClass('is-preload-0');
 				setTimeout(function () { $body.removeClass('is-preload-1'); }, 100);
 				setTimeout(function () { $body.removeClass('is-preload-2'); }, 200);
-			});
+			};
+
+			$(window).on('load', removePreload);
+
+			// Fallback: if document is already loaded or load event is missed.
+			if (document.readyState === 'complete') {
+				removePreload();
+			}
+
+			// Extreme fallback: ensure preload classes are removed after a delay regardless of events.
+			setTimeout(removePreload, 2500);
 		},
 
 		/* Build works list grouped by section */
