@@ -565,6 +565,13 @@ var PORTFOLIO_PROFILE = {
 			Viewer.load(w.full, w.position || 'center', captionHTML, w.size || 'cover');
 			Viewer.showNav(true);
 
+			// Preload next image for smoother browsing
+			var nextIndex = (index + 1) % works.length;
+			if (works[nextIndex]) {
+				var nextImg = new Image();
+				nextImg.src = works[nextIndex].full;
+			}
+
 			/* On mobile, hide sidebar automatically to show the work if it's not already hidden */
 			if (breakpoints.active('<=xsmall') && !$body.hasClass('fullscreen')) {
 				Portfolio.toggleSidebar();

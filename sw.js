@@ -1,15 +1,15 @@
 // Service Worker for Portfolio - Basic caching strategy
-const CACHE_NAME = 'portfolio-cache-v1';
+const CACHE_NAME = 'portfolio-cache-v2';
 const urlsToCache = [
-	'/',
-	'/index.html',
-	'/assets/css/main.css',
-	'/assets/js/jquery.min.js',
-	'/assets/js/browser.min.js',
-	'/assets/js/breakpoints.min.js',
-	'/assets/js/portfolio.js',
-	'/images/profile.jpg',
-	'/images/bg.jpg'
+	'./',
+	'index.html',
+	'assets/css/main.css',
+	'assets/js/jquery.min.js',
+	'assets/js/browser.min.js',
+	'assets/js/breakpoints.min.js',
+	'assets/js/portfolio.js',
+	'images/profile.jpg',
+	'images/bg.jpg'
 ];
 
 // Install event - cache essential files
@@ -71,7 +71,7 @@ self.addEventListener('fetch', function(event) {
 						var responseToCache = response.clone();
 
 						// Cache images and assets
-						if (event.request.url.match(/\.(jpg|jpeg|png|gif|svg|css|js)$/)) {
+						if (event.request.url.match(/\.(jpg|jpeg|png|gif|svg|webp|css|js|woff|woff2)$/)) {
 							caches.open(CACHE_NAME)
 								.then(function(cache) {
 									cache.put(event.request, responseToCache);
