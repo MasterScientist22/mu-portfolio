@@ -89,6 +89,111 @@
 				"size": "contain"
 			}
 		]
+	},
+	{
+		"label": "Others",
+		"items": [
+			{
+				"title": "My view",
+				"tag": "",
+				"description": "From where I stood, the detailed  architecture caught my attention. I photographed the vibrant carvings and traditional design to showcase the beauty and cultural heritage I witnessed firsthand.",
+				"year": "",
+				"thumb": "images/fulls/1.webp",
+				"full": "images/fulls/1.webp",
+				"position": "center",
+				"size": "contain"
+			},
+			{
+				"title": "Peace Above the Mountains",
+				"tag": "",
+				"description": "I captured this view as the giant Buddha sat quietly above the valley and blessing the below, surrounded by layers of mountains. The calm atmosphere and soft blue tones made the whole scene feel peaceful and timeless.",
+				"year": "",
+				"thumb": "images/fulls/2.webp",
+				"full": "images/fulls/2.webp",
+				"position": "center",
+				"size": "cover"
+			},
+			{
+				"title": "Valley",
+				"tag": "",
+				"description": "I captured this peaceful river winding through the valley, surrounded by hills and small settlements because the surrounding mountains and open landscape created a peaceful and scenic view that caught my attention.",
+				"year": "",
+				"thumb": "images/fulls/3.webp",
+				"full": "images/fulls/3.webp",
+				"position": "center",
+				"size": "contain"
+			},
+			{
+				"title": "Red and Old",
+				"tag": "",
+				"description": "I saw him during the Chimi Lhakhang Festival, enjoying his lunch while watching the traditional dances.",
+				"year": "",
+				"thumb": "images/fulls/4.webp",
+				"full": "images/fulls/4.webp",
+				"position": "center",
+				"size": "contain"
+			},
+			{
+				"title": "On the Hills",
+				"tag": "",
+				"description": "I liked how the sunlight fell on one part of the hill while the rest remained in shadow. The contrast made the landscape look peaceful and full of natural beauty.",
+				"year": "",
+				"thumb": "images/fulls/5.webp",
+				"full": "images/fulls/5.webp",
+				"position": "center",
+				"size": "contain"
+			},
+			{
+				"title": "Branch Manager",
+				"tag": "",
+				"description": "A crow perches proudly on the top of a tree branch, facing forward with a commanding presence. Its black feathers stand out against the green trees, giving the impression of a boss overseeing the forest",
+				"year": "",
+				"thumb": "images/fulls/6.webp",
+				"full": "images/fulls/6.webp",
+				"position": "center",
+				"size": "cover"
+			},
+			{
+				"title": "Bridge",
+				"tag": "",
+				"description": "Cars travel across a narrow bridge in Thimphu, surrounded by tall green trees and rocky hills. The scene reflects daily life in Thimphu, where roads and bridges link people through the mountains and forests.",
+				"year": "",
+				"thumb": "images/fulls/8.webp",
+				"full": "images/fulls/8.webp",
+				"position": "center",
+				"size": "contain"
+			},
+			{
+				"title": "Modern and Tradition",
+				"tag": "",
+				"description": "I captured this street where cars and tall streetlights reflect modern life, yet the Bhutanese houses with green roofs and the forested hillside remind me how tradition and nature remain deeply rooted alongside progress.",
+				"year": "",
+				"thumb": "images/fulls/8.webp",
+				"full": "images/fulls/8.webp",
+				"position": "center",
+				"size": "contain"
+			},
+			{
+				"title": "The Warmth of Simplicity",
+				"tag": "",
+				"description": "I captured this moment as a child quietly enjoyed a simple meal while sitting among richly decorated wooden carvings. The traditional clothing, warm colors, and calm expression created a peaceful scene that felt both timeless and intimate.",
+				"year": "",
+				"thumb": "images/fulls/9.webp",
+				"full": "images/fulls/9.webp",
+				"position": "center",
+				"size": "contain"
+			},
+			{
+				"title": "The Road Between Trees",
+				"tag": "",
+				"description": "I captured this view as the road quietly cut through layers of trees, surrounded by endless greenery. The peaceful atmosphere and the path through the trees made the scene feel calm and untouched.",
+				"year": "",
+				"thumb": "images/fulls/10.webp",
+				"full": "images/fulls/10.webp",
+				"position": "center",
+				"size": "contain"
+			}
+		]
 	}
 ];
 
