@@ -19,25 +19,12 @@
 	/* =====================================================================
 	 * ═══ PASTE YOUR EXPORTED DATA HERE (replace only this block) ═══
 	 * ===================================================================== */
-	var PORTFOLIO_DATA = [
-		/* Example — delete these and paste your own exported data:
-		{
-			"label": "Photography",
-			"items": [
-				{
-					"title": "Mountain Sunrise",
-					"tag": "Photography",
-					"description": "Shot at 4am above the clouds.",
-					"year": "2024",
-					"thumb": "images/fulls/photo1.jpg",
-					"full": "images/fulls/photo1.jpg",
-					"position": "center",
-					"size": "cover"
-				}
-			]
-		}
-		*/
-	];
+	var PORTFOLIO_DATA = [];
+
+	var PORTFOLIO_PROFILE = {
+		name: 'Tshering Kelxang',
+		bio:  'Gamer. Videographer. Animation Rigger. Photographer. Graphic Designer. Crafting worlds through lenses, rigs, and pixels — one frame at a time.'
+	};
 	/* ═══ END OF DATA BLOCK ═══ */
 
 	/* If admin has previewed changes locally via localStorage, prefer that.
@@ -61,6 +48,33 @@
 			item._sectionLabel = section.label;
 			works.push(item);
 		});
+	});
+
+	/* =====================================================================
+	 * PROFILE — load name & bio from localStorage (local) or PORTFOLIO_PROFILE (GitHub Pages)
+	 * ===================================================================== */
+	var DEFAULT_PROFILE = {
+		name: 'Tshering Kelxang',
+		bio:  'Gamer. Videographer. Animation Rigger. Photographer. Graphic Designer. Crafting worlds through lenses, rigs, and pixels — one frame at a time.'
+	};
+	var profileData = (function() {
+		try {
+			var raw = localStorage.getItem('portfolio_profile');
+			if (raw) {
+				var p = JSON.parse(raw);
+				if (p && p.name) return p;
+			}
+		} catch(e) {}
+		// Fall back to exported PORTFOLIO_PROFILE (for GitHub Pages)
+		if (typeof PORTFOLIO_PROFILE !== 'undefined' && PORTFOLIO_PROFILE.name)
+			return PORTFOLIO_PROFILE;
+		return DEFAULT_PROFILE;
+	})();
+
+	/* Apply to DOM immediately */
+	$(document).ready(function() {
+		$('#profile-name').text(profileData.name);
+		$('#profile-bio').text(profileData.bio);
 	});
 
 	/* =====================================================================

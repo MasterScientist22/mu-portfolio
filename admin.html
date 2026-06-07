@@ -261,6 +261,31 @@
 			💡 <strong>How to publish:</strong> Add your works below, then click the green <strong>📋 Export Code for GitHub</strong> button. Copy the snippet it generates, paste it into <code>assets/js/portfolio.js</code>, and push to GitHub.
 		</div>
 
+		<!-- PROFILE EDITOR -->
+		<div class="section-card" id="profile-editor-card">
+			<div class="section-header" onclick="this.parentElement.classList.toggle('collapsed')">
+				<div class="section-header-left">
+					<span class="section-chevron">▼</span>
+					<span class="section-label">👤 Profile</span>
+					<span class="section-count">name &amp; bio</span>
+				</div>
+			</div>
+			<div class="section-body">
+				<div class="form-group">
+					<label>Display Name</label>
+					<input type="text" id="profile-name-input" placeholder="e.g. Tshering Kelxang" />
+				</div>
+				<div class="form-group">
+					<label>Bio / Tagline</label>
+					<textarea id="profile-bio-input" placeholder="e.g. Gamer. Videographer. Animation Rigger..."></textarea>
+				</div>
+				<div style="display:flex;gap:0.6em;">
+					<button class="btn btn-teal" id="save-profile-btn">💾 Save Profile</button>
+					<button class="btn btn-outline" id="reset-profile-btn">↺ Reset to Default</button>
+				</div>
+			</div>
+		</div>
+
 		<!-- EXPORT PANEL (hidden until button clicked) -->
 		<div id="export-panel">
 			<div class="export-header">
@@ -271,7 +296,7 @@
 				<strong>3 steps to publish your portfolio:</strong><br>
 				1. Click <strong>Copy to Clipboard</strong> below.<br>
 				2. Open <code>assets/js/portfolio.js</code> in any text editor (Notepad, VS Code, etc.).<br>
-				3. Find the line <code>var PORTFOLIO_DATA = [</code> — select from that line down to the matching <code>];</code> and replace it with what you copied. Save, commit &amp; push to GitHub.
+				3. Find the line <code>var PORTFOLIO_DATA = [</code> — select from that line down to the end of the <code>var PORTFOLIO_PROFILE = {...};</code> line and replace it with what you copied. Save, commit &amp; push to GitHub.
 			</div>
 			<pre id="export-code">// your data will appear here</pre>
 			<div class="export-copy-bar">
@@ -359,6 +384,13 @@
 <script>
 const ADMIN_PASSWORD = 'kelxang2024';
 const STORAGE_KEY    = 'portfolio_sections';
+const PROFILE_KEY    = 'portfolio_profile';
+
+const DEFAULT_PROFILE = {
+	name: 'Tshering Kelxang',
+	bio:  'Gamer. Videographer. Animation Rigger. Photographer. Graphic Designer. Crafting worlds through lenses, rigs, and pixels — one frame at a time.'
+};
+
 let sections = [];
 
 /* ── LOGIN ── */
@@ -388,9 +420,40 @@ function loadData() {
 		const raw = localStorage.getItem(STORAGE_KEY);
 		sections = raw ? JSON.parse(raw) : [];
 	} catch(e) { sections = []; }
+	loadProfile();
 	renderSections();
 	showStatus('Loaded ' + sections.length + ' section(s).');
 }
+
+function loadProfile() {
+	try {
+		const raw = localStorage.getItem(PROFILE_KEY);
+		const p   = raw ? JSON.parse(raw) : DEFAULT_PROFILE;
+		document.getElementById('profile-name-input').value = p.name || DEFAULT_PROFILE.name;
+		document.getElementById('profile-bio-input').value  = p.bio  || DEFAULT_PROFILE.bio;
+	} catch(e) {
+		document.getElementById('profile-name-input').value = DEFAULT_PROFILE.name;
+		document.getElementById('profile-bio-input').value  = DEFAULT_PROFILE.bio;
+	}
+}
+
+document.getElementById('save-profile-btn').addEventListener('click', () => {
+	const name = document.getElementById('profile-name-input').value.trim();
+	const bio  = document.getElementById('profile-bio-input').value.trim();
+	if (!name) { showToast('Name cannot be empty', 'error'); return; }
+	try {
+		localStorage.setItem(PROFILE_KEY, JSON.stringify({ name, bio }));
+		showToast('✅ Profile saved!', 'success');
+		showStatus('Profile saved. Remember to export and update index.html for GitHub.');
+	} catch(e) { showToast('Save failed', 'error'); }
+});
+
+document.getElementById('reset-profile-btn').addEventListener('click', () => {
+	document.getElementById('profile-name-input').value = DEFAULT_PROFILE.name;
+	document.getElementById('profile-bio-input').value  = DEFAULT_PROFILE.bio;
+	localStorage.removeItem(PROFILE_KEY);
+	showToast('Reset to default', 'success');
+});
 function saveData() {
 	try {
 		localStorage.setItem(STORAGE_KEY, JSON.stringify(sections));
@@ -404,7 +467,10 @@ function saveData() {
 /* ── EXPORT ── */
 document.getElementById('export-btn').addEventListener('click', function() {
 	const json    = JSON.stringify(sections, null, '\t');
-	const snippet = 'var PORTFOLIO_DATA = ' + json + ';';
+	const profile = JSON.parse(localStorage.getItem(PROFILE_KEY) || JSON.stringify(DEFAULT_PROFILE));
+	const snippet =
+		'var PORTFOLIO_DATA = ' + json + ';\n\n' +
+		'var PORTFOLIO_PROFILE = ' + JSON.stringify(profile, null, '\t') + ';';
 	document.getElementById('export-code').textContent = snippet;
 	document.getElementById('export-panel').style.display = 'block';
 	document.getElementById('copy-confirm').style.display = 'none';
