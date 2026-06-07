@@ -32,6 +32,26 @@
 				"full": "images/fulls/Exhibition photo 1_kelxang.jpg",
 				"position": "center",
 				"size": "cover"
+			},
+			{
+				"title": "Photo 2",
+				"tag": "",
+				"description": "This photograph was taken during the inaugural Chimi Lhakhang Festival. It showcases local women performing a traditional Bhutanese folk dance while dressed in vibrant national attire and traditional jewelry. The image highlights Bhutan's living cultural heritage, where music, dance, and community gatherings play an important role in preserving traditions. The festive setting and participation of community members demonstrate the cultural significance of the event. As the first Chimi Lhakhang Festival, this celebration marked an important milestone in promoting and preserving local customs and traditions for future generations.",
+				"year": "",
+				"thumb": "images/fulls/Exhibition photo 2_kelxang.jpg",
+				"full": "images/fulls/Exhibition photo 2_kelxang.jpg",
+				"position": "center",
+				"size": "contain"
+			},
+			{
+				"title": "Photo 3",
+				"tag": "",
+				"description": "While walking around the Chimi Lhakhang Festival, I noticed this elderly man sitting alone under a tree and quietly enjoying the event. Unlike the busy crowd around him, he seemed completely at peace, simply taking in the atmosphere and watching the celebrations unfold. His gentle expression and relaxed posture caught my attention, and I felt it was a moment worth capturing. Dressed in traditional Bhutanese attire, he reflects the deep connection many Bhutanese people have with their culture and community. For me, this photograph is a reminder that festivals are not only about performances and celebrations but also about the quiet moments of happiness and reflection that people experience in their own way.",
+				"year": "",
+				"thumb": "images/fulls/Exhibition photo 3_kelxang.jpg",
+				"full": "images/fulls/Exhibition photo 3_kelxang.jpg",
+				"position": "center",
+				"size": "contain"
 			}
 		]
 	}
