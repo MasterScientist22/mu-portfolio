@@ -465,12 +465,12 @@ var PORTFOLIO_PROFILE = {
 			$(window).on('load', removePreload);
 
 			// Fallback: if document is already loaded or load event is missed.
-			if (document.readyState === 'complete') {
+			if (document.readyState === 'complete' || document.readyState === 'interactive') {
 				removePreload();
 			}
 
 			// Extreme fallback: ensure preload classes are removed after a delay regardless of events.
-			setTimeout(removePreload, 2500);
+			setTimeout(removePreload, 2000);
 		},
 
 		/* Build works list grouped by section */

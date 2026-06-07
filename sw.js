@@ -1,5 +1,5 @@
 // Service Worker for Portfolio - Basic caching strategy
-const CACHE_NAME = 'portfolio-cache-v2';
+const CACHE_NAME = 'portfolio-cache-v3';
 const urlsToCache = [
 	'./',
 	'index.html',

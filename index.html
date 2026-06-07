@@ -281,6 +281,11 @@
 
 			/* ── Mobile Responsiveness ── */
 			@media screen and (max-width: 480px) {
+				#main {
+					left: 0 !important;
+					right: 0 !important;
+				}
+
 				#profile-panel {
 					padding: 1.75em 1em 1.25em;
 				}
@@ -392,6 +397,22 @@
 
 		<!-- Service Worker for caching (optional) -->
 		<script>
+			// Early fail-safe to remove preload classes on mobile if window.load is delayed
+			(function() {
+				var removePreload = function() {
+					document.body.classList.remove('is-preload-0');
+					setTimeout(function() { document.body.classList.remove('is-preload-1'); }, 100);
+					setTimeout(function() { document.body.classList.remove('is-preload-2'); }, 200);
+				};
+				if (document.readyState === 'complete') {
+					removePreload();
+				} else {
+					window.addEventListener('load', removePreload);
+					// Fallback after 2.5 seconds regardless of load event
+					setTimeout(removePreload, 2500);
+				}
+			})();
+
 			if ('serviceWorker' in navigator) {
 				window.addEventListener('load', function() {
 					navigator.serviceWorker.register('sw.js').catch(function() {
