@@ -357,7 +357,6 @@
 			this.showWorkDetail(prev);
 		},
 
-		/* ── Toggle sidebar ── */
 		toggleSidebar: function () {
 			if ($body.hasClass('fullscreen')) {
 				$body.removeClass('fullscreen');
@@ -366,7 +365,10 @@
 				$body.addClass('fullscreen');
 				$main.blur();
 			}
-		}
+		},
+
+		/* ── Toggle sidebar ── */
+		// (end of Portfolio object)
 	};
 
 	/* =====================================================================
