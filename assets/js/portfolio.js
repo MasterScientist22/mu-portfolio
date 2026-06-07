@@ -19,12 +19,28 @@
 	/* =====================================================================
 	 * ═══ PASTE YOUR EXPORTED DATA HERE (replace only this block) ═══
 	 * ===================================================================== */
-	var PORTFOLIO_DATA = [];
+	var PORTFOLIO_DATA = [
+	{
+		"label": "Exhibition",
+		"items": [
+			{
+				"title": "Exhibition photo 1",
+				"tag": "",
+				"description": "I took this photo to capture the beauty of Thimphu from a higher viewpoint. From here, I could see how the city stretches across the valley, with buildings nestled among the hills. The road running through the center adds a sense of direction and movement, while the surrounding greenery highlights Bhutan's natural beauty. To me, this image reflects the peaceful blend of urban development and nature that makes Thimphu unique. Ex1",
+				"year": "",
+				"thumb": "images/fulls/Exhibition photo 1_kelxang.jpg",
+				"full": "images/fulls/Exhibition photo 1_kelxang.jpg",
+				"position": "center",
+				"size": "cover"
+			}
+		]
+	}
+];
 
-	var PORTFOLIO_PROFILE = {
-		name: 'Tshering Kelxang',
-		bio:  'Gamer. Videographer. Animation Rigger. Photographer. Graphic Designer. Crafting worlds through lenses, rigs, and pixels — one frame at a time.'
-	};
+var PORTFOLIO_PROFILE = {
+	"name": "Tshering Kelxang",
+	"bio": "Gamer. Videographer. Animation Rigger. Photographer. Graphic Designer. Crafting worlds through lenses, rigs, and pixels — one frame at a time."
+};
 	/* ═══ END OF DATA BLOCK ═══ */
 
 	/* If admin has previewed changes locally via localStorage, prefer that.
