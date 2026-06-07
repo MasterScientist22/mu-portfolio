@@ -158,8 +158,8 @@
 				"tag": "",
 				"description": "Cars travel across a narrow bridge in Thimphu, surrounded by tall green trees and rocky hills. The scene reflects daily life in Thimphu, where roads and bridges link people through the mountains and forests.",
 				"year": "",
-				"thumb": "images/fulls/8.webp",
-				"full": "images/fulls/8.webp",
+				"thumb": "images/fulls/7.webp",
+				"full": "images/fulls/7.webp",
 				"position": "center",
 				"size": "contain"
 			},
