@@ -174,9 +174,9 @@
 				"size": "contain"
 			},
 			{
-				"title": "The Warmth of Simplicity",
+				"title": "Simple Meal",
 				"tag": "",
-				"description": "I captured this moment as a child quietly enjoyed a simple meal while sitting among richly decorated wooden carvings. The traditional clothing, warm colors, and calm expression created a peaceful scene that felt both timeless and intimate.",
+				"description": "I took this photo to capture a peaceful moment of a young child enjoying a meal. The traditional clothing and cultural background add beauty to the image, while the child’s natural expression reflects simplicity, happiness, and everyday life.",
 				"year": "",
 				"thumb": "images/fulls/9.webp",
 				"full": "images/fulls/9.webp",
@@ -184,9 +184,9 @@
 				"size": "contain"
 			},
 			{
-				"title": "The Road Between Trees",
+				"title": "Forest Road",
 				"tag": "",
-				"description": "I captured this view as the road quietly cut through layers of trees, surrounded by endless greenery. The peaceful atmosphere and the path through the trees made the scene feel calm and untouched.",
+				"description": "I took this photograph to capture the peaceful atmosphere of a forest landscape. The winding road surrounded by lush green trees creates a sense of calm, beauty, and exploration, highlighting the connection between nature and travel.",
 				"year": "",
 				"thumb": "images/fulls/10.webp",
 				"full": "images/fulls/10.webp",
