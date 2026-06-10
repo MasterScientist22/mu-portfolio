@@ -415,8 +415,28 @@
 
 			if ('serviceWorker' in navigator) {
 				window.addEventListener('load', function() {
-					navigator.serviceWorker.register('sw.js').catch(function() {
+					navigator.serviceWorker.register('sw.js').then(function(reg) {
+						// Check for a new SW version on every page load
+						reg.update();
+
+						// When a new SW is found, tell it to activate immediately
+						reg.addEventListener('updatefound', function() {
+							var newWorker = reg.installing;
+							if (!newWorker) return;
+							newWorker.addEventListener('statechange', function() {
+								if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+									newWorker.postMessage({ type: 'SKIP_WAITING' });
+								}
+							});
+						});
+					}).catch(function() {
 						// Service worker registration failed, no problem - site still works
+					});
+
+					// When a new SW takes control, reload once to load fresh assets
+					var refreshing = false;
+					navigator.serviceWorker.addEventListener('controllerchange', function() {
+						if (!refreshing) { refreshing = true; window.location.reload(); }
 					});
 				});
 			}

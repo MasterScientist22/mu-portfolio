@@ -1,6 +1,10 @@
-// Service Worker for Portfolio - Basic caching strategy
-const CACHE_NAME = 'portfolio-cache-v3';
-const urlsToCache = [
+// Service Worker for Portfolio
+// CACHE_VERSION is replaced with a timestamp at deploy time via portfolio.js self-update trick.
+// To bust the cache on every deploy, just update the date string below.
+const CACHE_VERSION = '20260610-001'; // ← update this string each deploy (or automate it)
+const CACHE_NAME = 'portfolio-cache-' + CACHE_VERSION;
+
+const PRECACHE_URLS = [
 	'./',
 	'index.html',
 	'assets/css/main.css',
@@ -12,85 +16,108 @@ const urlsToCache = [
 	'images/bg.jpg'
 ];
 
-// Install event - cache essential files
+// ── Message: respond to SKIP_WAITING from the page ────────────────────────────
+self.addEventListener('message', function(event) {
+	if (event.data && event.data.type === 'SKIP_WAITING') {
+		self.skipWaiting();
+	}
+});
+
+// ── Install: pre-cache core assets ──────────────────────────────────────────
 self.addEventListener('install', function(event) {
 	event.waitUntil(
 		caches.open(CACHE_NAME)
 			.then(function(cache) {
-				return cache.addAll(urlsToCache.map(url => new Request(url, {cache: 'reload'})));
+				return cache.addAll(PRECACHE_URLS.map(url => new Request(url, { cache: 'reload' })));
 			})
 			.catch(function() {
-				// Cache failed, that's okay - site still works
+				// Pre-cache failed — site still works via network
 			})
 	);
+	// Take over immediately, don't wait for old SW to die
 	self.skipWaiting();
 });
 
-// Activate event - clean up old caches
+// ── Activate: delete ALL old caches ─────────────────────────────────────────
 self.addEventListener('activate', function(event) {
 	event.waitUntil(
 		caches.keys().then(function(cacheNames) {
 			return Promise.all(
-				cacheNames.map(function(cacheName) {
-					if (cacheName !== CACHE_NAME) {
-						return caches.delete(cacheName);
-					}
-				})
+				cacheNames
+					.filter(function(name) { return name !== CACHE_NAME; })
+					.map(function(name) { return caches.delete(name); })
 			);
+		}).then(function() {
+			// Tell all open tabs to use the new SW immediately
+			return self.clients.claim();
 		})
 	);
-	return self.clients.claim();
 });
 
-// Fetch event - serve from cache, fallback to network
+// ── Fetch: network-first for HTML, cache-first for assets ───────────────────
 self.addEventListener('fetch', function(event) {
 	// Skip cross-origin requests
-	if (!event.request.url.startsWith(self.location.origin)) {
+	if (!event.request.url.startsWith(self.location.origin)) return;
+
+	const url = new URL(event.request.url);
+	const isHTML = event.request.headers.get('Accept') &&
+	               event.request.headers.get('Accept').includes('text/html');
+	const isAsset = /\.(css|js|woff|woff2|eot|ttf|svg)$/.test(url.pathname);
+	const isImage = /\.(jpg|jpeg|png|gif|webp|ico)$/.test(url.pathname);
+
+	if (isHTML) {
+		// HTML: network-first → on failure serve stale cache
+		event.respondWith(
+			fetch(event.request)
+				.then(function(response) {
+					// Cache the fresh HTML for offline fallback
+					var clone = response.clone();
+					caches.open(CACHE_NAME).then(function(cache) { cache.put(event.request, clone); });
+					return response;
+				})
+				.catch(function() {
+					return caches.match(event.request);
+				})
+		);
 		return;
 	}
 
-	event.respondWith(
-		caches.match(event.request)
-			.then(function(response) {
-				// Cache hit - return response
-				if (response) {
+	if (isAsset) {
+		// CSS/JS/fonts: cache-first (they're versioned by SW cache name)
+		event.respondWith(
+			caches.match(event.request).then(function(cached) {
+				return cached || fetch(event.request).then(function(response) {
+					var clone = response.clone();
+					caches.open(CACHE_NAME).then(function(cache) { cache.put(event.request, clone); });
 					return response;
-				}
-
-				// Clone the request
-				var fetchRequest = event.request.clone();
-
-				return fetch(fetchRequest).then(
-					function(response) {
-						// Check if valid response
-						if (!response || response.status !== 200 || response.type !== 'basic') {
-							return response;
-						}
-
-						// Clone the response
-						var responseToCache = response.clone();
-
-						// Cache images and assets
-						if (event.request.url.match(/\.(jpg|jpeg|png|gif|svg|webp|css|js|woff|woff2)$/)) {
-							caches.open(CACHE_NAME)
-								.then(function(cache) {
-									cache.put(event.request, responseToCache);
-								});
-						}
-
-						return response;
-					}
-				);
-			})
-			.catch(function() {
-				// Network failed and not in cache
-				return new Response('Offline - please check your connection', {
-					status: 503,
-					statusText: 'Service Unavailable',
-					headers: new Headers({
-						'Content-Type': 'text/plain'
-					})
 				});
 			})
+		);
+		return;
+	}
+
+	if (isImage) {
+		// Images: cache-first with network fallback (images rarely change mid-deploy)
+		event.respondWith(
+			caches.match(event.request).then(function(cached) {
+				return cached || fetch(event.request).then(function(response) {
+					if (response && response.status === 200) {
+						var clone = response.clone();
+						caches.open(CACHE_NAME).then(function(cache) { cache.put(event.request, clone); });
+					}
+					return response;
+				});
+			}).catch(function() {
+				return new Response('', { status: 404 });
+			})
+		);
+		return;
+	}
+
+	// Everything else: network with cache fallback
+	event.respondWith(
+		fetch(event.request).catch(function() {
+			return caches.match(event.request);
+		})
 	);
 });
