@@ -829,47 +829,82 @@ async function publishToGitHub() {
 			'var PORTFOLIO_DATA = ' + json + ';\n\n' +
 			'var PORTFOLIO_PROFILE = ' + JSON.stringify(profile, null, '\t') + ';';
 
-		// Fetch current portfolio.js to get its SHA (required by GitHub API)
-		const filePath = 'assets/js/portfolio.js';
-		const apiBase  = 'https://api.github.com/repos/' + g.username + '/' + g.repo + '/contents/' + filePath;
+		// ── Build timestamp for cache busting ──────────────────────────────
+		const now = new Date();
+		const pad = n => String(n).padStart(2, '0');
+		const buildStamp = now.getFullYear() + pad(now.getMonth()+1) + pad(now.getDate()) +
+			'-' + pad(now.getHours()) + pad(now.getMinutes());
+
 		const headers  = { 'Authorization': 'token ' + g.token, 'Accept': 'application/vnd.github.v3+json' };
+		const repoBase = 'https://api.github.com/repos/' + g.username + '/' + g.repo + '/contents/';
 
-		const getRes = await fetch(apiBase + '?ref=' + g.branch, { headers });
-		if (!getRes.ok) throw new Error('Could not fetch portfolio.js from GitHub. Check your username, repo, and token.');
-		const fileData = await getRes.json();
-		// Decode base64 safely, preserving non-ASCII characters like ═ and —
-		const currentContent = decodeURIComponent(escape(atob(fileData.content.replace(/\n/g, ''))));
+		// ── 1. Update portfolio.js ───────────────────────────────────────────
+		const portfolioPath = 'assets/js/portfolio.js';
+		const portfolioApi  = repoBase + portfolioPath;
 
-		// Replace only the data block inside the file
+		const getPortfolio = await fetch(portfolioApi + '?ref=' + g.branch, { headers });
+		if (!getPortfolio.ok) throw new Error('Could not fetch portfolio.js from GitHub. Check your username, repo, and token.');
+		const portfolioFile = await getPortfolio.json();
+		const currentContent = decodeURIComponent(escape(atob(portfolioFile.content.replace(/\n/g, ''))));
+
 		const startMarker = '/* =====================================================================\n\t * \u2550\u2550\u2550 PASTE YOUR EXPORTED DATA HERE (replace only this block) \u2550\u2550\u2550\n\t * ===================================================================== */';
 		const endMarker   = '/* \u2550\u2550\u2550 END OF DATA BLOCK \u2550\u2550\u2550 */';
 		const startIdx = currentContent.indexOf(startMarker);
 		const endIdx   = currentContent.indexOf(endMarker) + endMarker.length;
 		if (startIdx === -1 || endIdx === -1) throw new Error('Could not find data block markers in portfolio.js. Make sure the file has not been manually edited.');
 
-		const newContent = currentContent.slice(0, startIdx) +
+		const newPortfolioContent = currentContent.slice(0, startIdx) +
 			startMarker + '\n\t' +
 			snippet + '\n\t' +
 			endMarker +
 			currentContent.slice(endIdx);
 
-		// Push the updated file
-		const putRes = await fetch(apiBase, {
+		const putPortfolio = await fetch(portfolioApi, {
 			method: 'PUT',
 			headers: { ...headers, 'Content-Type': 'application/json' },
 			body: JSON.stringify({
-				message: 'Update portfolio data from admin',
-				content: btoa(unescape(encodeURIComponent(newContent))),
-				sha: fileData.sha,
+				message: 'Update portfolio data [' + buildStamp + ']',
+				content: btoa(unescape(encodeURIComponent(newPortfolioContent))),
+				sha: portfolioFile.sha,
 				branch: g.branch
 			})
 		});
-		if (!putRes.ok) {
-			const err = await putRes.json();
-			throw new Error(err.message || 'GitHub API error');
+		if (!putPortfolio.ok) {
+			const err = await putPortfolio.json();
+			throw new Error(err.message || 'GitHub API error (portfolio.js)');
 		}
+
+		// ── 2. Update sw.js — bump CACHE_VERSION so all devices get fresh files ──
+		const swApi = repoBase + 'sw.js';
+		const getSw = await fetch(swApi + '?ref=' + g.branch, { headers });
+		if (!getSw.ok) throw new Error('Could not fetch sw.js from GitHub.');
+		const swFile = await getSw.json();
+		const swContent = decodeURIComponent(escape(atob(swFile.content.replace(/\n/g, ''))));
+
+		// Replace the CACHE_VERSION line with the new timestamp
+		const newSwContent = swContent.replace(
+			/const CACHE_VERSION = '[^']*';/,
+			"const CACHE_VERSION = '" + buildStamp + "';"
+		);
+		if (newSwContent === swContent) throw new Error('Could not find CACHE_VERSION in sw.js. Was it manually edited?');
+
+		const putSw = await fetch(swApi, {
+			method: 'PUT',
+			headers: { ...headers, 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				message: 'Bump cache version [' + buildStamp + ']',
+				content: btoa(unescape(encodeURIComponent(newSwContent))),
+				sha: swFile.sha,
+				branch: g.branch
+			})
+		});
+		if (!putSw.ok) {
+			const err = await putSw.json();
+			throw new Error(err.message || 'GitHub API error (sw.js)');
+		}
+
 		showToast('✅ Published! GitHub is rebuilding your site...', 'success');
-		showStatus('✅ Published to GitHub! Your site will update in ~1 minute.');
+		showStatus('✅ Published to GitHub! Caches will clear automatically. Site updates in ~1 minute.');
 		hideUnsavedBanner();
 	} catch(e) {
 		showToast('❌ ' + e.message, 'error');

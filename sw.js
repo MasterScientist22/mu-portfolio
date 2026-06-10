@@ -83,7 +83,20 @@ self.addEventListener('fetch', function(event) {
 	}
 
 	if (isAsset) {
-		// CSS/JS/fonts: cache-first (they're versioned by SW cache name)
+		// portfolio.js holds live data — always fetch fresh from network
+		if (url.pathname.endsWith('portfolio.js')) {
+			event.respondWith(
+				fetch(event.request).then(function(response) {
+					var clone = response.clone();
+					caches.open(CACHE_NAME).then(function(cache) { cache.put(event.request, clone); });
+					return response;
+				}).catch(function() {
+					return caches.match(event.request);
+				})
+			);
+			return;
+		}
+		// Other CSS/JS/fonts: cache-first (they're versioned by SW cache name)
 		event.respondWith(
 			caches.match(event.request).then(function(cached) {
 				return cached || fetch(event.request).then(function(response) {
